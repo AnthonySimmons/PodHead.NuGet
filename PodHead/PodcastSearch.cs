@@ -21,10 +21,6 @@ namespace PodHead
 
         public static int Limit = 10;
 
-        private static PodcastSearch _instance;
-
-        private static object _instanceLock = new object();
-
         private readonly IConfig _config;
 
         private readonly Parser _parser;
@@ -33,20 +29,7 @@ namespace PodHead
 
         public ConcurrentList<Subscription> Results = new ConcurrentList<Subscription>();
 
-        public static PodcastSearch Get(IConfig config, Parser parser)
-        {
-            lock (_instanceLock)
-            {
-                if (_instance == null)
-                {
-                    _instance = new PodcastSearch(config, parser);
-                }
-            }
-            return _instance;
-        }
-
-
-        private PodcastSearch(IConfig config, Parser parser)
+        public PodcastSearch(IConfig config, Parser parser)
         {
             _config = config;
             _parser = parser;

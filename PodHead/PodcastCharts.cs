@@ -15,8 +15,6 @@ namespace PodHead
 
     internal class PodcastCharts
     {
-        
-
         public static readonly Dictionary<string, int> PodcastGenreCodes = new Dictionary<string, int> {
             { "All", 0 },
 			{ "Arts", 1301 },
@@ -36,23 +34,9 @@ namespace PodHead
 			{ "Technology", 1318 },
 			{ "TV & Film", 1309 },
 		};
-
-        private static PodcastCharts _instance;
-        private static object _instanceLock = new object();
+       
 
         private readonly Parser _parser;
-
-        public static PodcastCharts Get(IConfig config, Parser parser)
-        {
-            lock (_instanceLock)
-            {
-                if (_instance == null)
-                {
-                    _instance = new PodcastCharts(config, parser);
-                }
-            }
-            return _instance;
-        }
 
 		public ConcurrentList<Subscription> Podcasts; 
 
@@ -79,7 +63,7 @@ namespace PodHead
 
         private readonly ErrorLogger _errorLogger;
 
-        private PodcastCharts(IConfig config, Parser parser)
+        public PodcastCharts(IConfig config, Parser parser)
 		{
 			Limit = DefaultLimit;
 			Genre = "Comedy";

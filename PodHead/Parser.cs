@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using System.Xml.Serialization;
 using System.IO;
 using System.Net;
-using System.Data;
 
 namespace PodHead
 {
@@ -19,31 +16,15 @@ namespace PodHead
 
     internal class Parser
     {
-        private static readonly object _lock = new object();
-
-        private static Parser _instance;
-
         public event SubscriptionParsedCompleteEventHandler SubscriptionParsedComplete;
 
         private readonly IConfig _config;
         private readonly ErrorLogger _errorLogger;
 
-        private Parser(IConfig config)
+        public Parser(IConfig config)
         {
             _config = config;
             _errorLogger = ErrorLogger.Get(_config);
-        }
-
-        public static Parser Get(IConfig config)
-        {
-            lock(_lock)
-            {
-                if(_instance == null)
-                {
-                    _instance = new Parser(config);
-                }
-            }
-            return _instance;
         }
 
         private static FeedType GetFeedType(string rssString)

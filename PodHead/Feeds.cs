@@ -29,12 +29,8 @@ namespace PodHead
 
         private readonly Parser _parser;
 
-        private static object _instanceLock = new object();
-
         public event EventHandler AllFeedsParsed;
-
-        private static Feeds _instance;
-
+     
         private readonly ErrorLogger _errorLogger;
 
         private Item _nowPlaying;
@@ -47,20 +43,8 @@ namespace PodHead
                 _nowPlaying.IsNowPlaying = true;
             }
         }
-
-        public static Feeds Get(Parser parser, IConfig config)
-        {
-            lock (_instanceLock)
-            {
-                if (_instance == null)
-                {
-                    _instance = new Feeds(parser, config);
-                }
-            }
-            return _instance;
-        }
         
-        private Feeds(Parser parser, IConfig config)
+        public Feeds(Parser parser, IConfig config)
         {
             _config = config;
             _parser = parser;
