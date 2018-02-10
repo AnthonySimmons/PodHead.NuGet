@@ -3,7 +3,7 @@
 
 namespace PodHead.Interfaces
 {
-    internal interface IParser
+    internal interface IRssParser
     {
         event SubscriptionParsedCompleteEventHandler SubscriptionParsedComplete;
 

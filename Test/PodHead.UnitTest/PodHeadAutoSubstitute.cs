@@ -3,12 +3,14 @@
 using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
+using NSubstitute;
+using PodHead.Interfaces;
 
 namespace PodHead.UnitTest
 {
-    internal class AutoFixtureSubstituteAttribute : AutoDataAttribute
+    internal class PodHeadAutoSubstitute : AutoDataAttribute
     {
-        public AutoFixtureSubstituteAttribute()
+        public PodHeadAutoSubstitute()
             : base(CreateFixture)
         {
         }
@@ -16,6 +18,9 @@ namespace PodHead.UnitTest
         public static IFixture CreateFixture()
         {
             IFixture fixture = new Fixture().Customize(new AutoConfiguredNSubstituteCustomization());
+            fixture.Inject(Substitute.For<IPodcastSearch>());
+            fixture.Inject(Substitute.For<IPodcastCharts>());
+            fixture.Inject(Substitute.For<IRssParser>());
             return fixture;
         }
     }

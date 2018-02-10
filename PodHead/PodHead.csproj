@@ -52,7 +52,7 @@
     <Compile Include="ConcurrentList.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="Interfaces\IConfig.cs" />
-    <Compile Include="Interfaces\IParser.cs" />
+    <Compile Include="Interfaces\IRssParser.cs" />
     <Compile Include="Interfaces\IPodcastCharts.cs" />
     <Compile Include="Interfaces\IPodcastSearch.cs" />
     <Compile Include="IPodcastCharts.cs" />
@@ -73,7 +73,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="PodcastEpisode.cs" />
-    <Compile Include="Parser.cs" />
+    <Compile Include="RssParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

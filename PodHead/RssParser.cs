@@ -15,14 +15,14 @@ namespace PodHead
         Rss2 = 2,
     }
 
-    internal class Parser : IParser
+    internal class RssParser : IRssParser
     {
         public event SubscriptionParsedCompleteEventHandler SubscriptionParsedComplete;
 
         private readonly IConfig _config;
         private readonly ErrorLogger _errorLogger;
 
-        public Parser(IConfig config)
+        public RssParser(IConfig config)
         {
             _config = config;
             _errorLogger = ErrorLogger.Get(_config);

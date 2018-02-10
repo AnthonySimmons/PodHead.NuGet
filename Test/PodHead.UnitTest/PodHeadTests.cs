@@ -32,19 +32,25 @@ namespace PodHead.UnitTest
             Assert.Throws<ArgumentException>(() => new PodHead(downloadFolder, appDataFolder, appDataImageFolder, configFileName));
         }
 
-        [Test, AutoFixtureSubstitute]
-        public void Ctor_ShouldInstantiate_WhenConfigIsNotNull(IConfig config)
+        [Test]
+        public void Ctor_ShouldInstantiate_WhenStringsAreValid()
         {
-            Assert.IsNotNull(new PodHead(null));
+            Assert.IsNotNull(new PodHead("downloadFolder", "appDataFolder", "appDataImageFolder", "configFileName"));
         }
 
-        [Test, AutoFixtureSubstitute]
+        [Test, PodHeadAutoSubstitute]
+        public void Ctor_ShouldInstantiate_WhenConfigIsNotNull(IConfig config)
+        {
+            Assert.IsNotNull(new PodHead(config));
+        }
+
+        [Test, PodHeadAutoSubstitute]
         public void Ctor_ShouldThrow_WhenConfigIsNull()
         {
             Assert.Throws<ArgumentNullException>(() => new PodHead(null));
         }
 
-        [Test, AutoFixtureSubstitute]
+        [Test, PodHeadAutoSubstitute]
         public void Search_ShouldInvokePodcastSearch(PodHead sut, IPodcastSearch podcastSearch, string searchTerm, uint limit)
         {
             sut.SetField(typeof(IPodcastSearch), podcastSearch);
@@ -52,5 +58,21 @@ namespace PodHead.UnitTest
             podcastSearch.Received(1).Search(searchTerm, limit);
         }
 
+        [Test, PodHeadAutoSubstitute]
+        public void GetTopCharts_ShouldInvokePodcastCharts(PodHead sut, IPodcastCharts podcastCharts, PodcastGenre podcastGenre, uint limit)
+        {
+            sut.SetField(typeof(IPodcastCharts), podcastCharts);
+            sut.GetTopCharts(podcastGenre, limit);
+            podcastCharts.Received(1).GetPodcasts(podcastGenre, limit);
+        }
+
+        [Test, PodHeadAutoSubstitute]
+        public void LoadPodcastFeed_ShouldInvokePodcastFeed(PodHead sut, PodcastFeed podcastFeed, IRssParser rssParser, uint limit)
+        {
+            sut.SetField(typeof(IRssParser), rssParser);
+            sut.LoadPodcastFeed(podcastFeed, limit);
+            rssParser.Received(1).LoadPodcastFeed(podcastFeed, limit);
+        }
+        
     }
 }

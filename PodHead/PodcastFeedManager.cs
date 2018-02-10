@@ -28,7 +28,7 @@ namespace PodHead
 
         private readonly IConfig _config;
 
-        private readonly IParser _parser;
+        private readonly IRssParser _parser;
 
         public event EventHandler AllFeedsParsed;
      
@@ -45,7 +45,7 @@ namespace PodHead
             }
         }
         
-        public PodcastFeedManager(IConfig config, IParser parser)
+        public PodcastFeedManager(IConfig config, IRssParser parser)
         {
             _config = config;
             _parser = parser;

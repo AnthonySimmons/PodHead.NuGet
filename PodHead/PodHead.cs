@@ -13,7 +13,7 @@ namespace PodHead
 
         private readonly PodcastFeedManager _feedManager;
 
-        private readonly IParser _parser;
+        private readonly IRssParser _parser;
 
         private readonly IConfig _config;
 
@@ -25,7 +25,7 @@ namespace PodHead
         public PodHead(IConfig config)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
-            _parser = new Parser(_config);
+            _parser = new RssParser(_config);
             _feedManager = new PodcastFeedManager(_config, _parser);
             _podcastCharts = new PodcastCharts(_config, _parser);
             _podcastSearch = new PodcastSearch(_config, _parser);

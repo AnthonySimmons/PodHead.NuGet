@@ -18,11 +18,11 @@ namespace PodHead
         
         private readonly IConfig _config;
 
-        private readonly IParser _parser;
+        private readonly IRssParser _parser;
 
         private readonly ErrorLogger _errorLogger;
         
-        public PodcastSearch(IConfig config, IParser parser)
+        public PodcastSearch(IConfig config, IRssParser parser)
         {
             _config = config;
             _parser = parser;

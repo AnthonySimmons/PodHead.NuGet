@@ -12,7 +12,7 @@ namespace PodHead
 {
     internal class PodcastCharts : IPodcastCharts
     {
-        private readonly IParser _parser;
+        private readonly IRssParser _parser;
        
         //https://itunes.apple.com/lookup?id=260190086&entity=podcast
         private const string iTunesLookupUrlFormat = "https://itunes.apple.com/lookup?id={0}&entity={1}";
@@ -31,7 +31,7 @@ namespace PodHead
 
         private readonly ErrorLogger _errorLogger;
 
-        public PodcastCharts(IConfig config, IParser parser)
+        public PodcastCharts(IConfig config, IRssParser parser)
 		{
             _config = config;
             _parser = parser;
@@ -55,7 +55,7 @@ namespace PodHead
             return json;
         }
 
-        public static List<PodcastFeed> DeserializeFeeds(string json, IConfig config, IParser parser)
+        public static List<PodcastFeed> DeserializeFeeds(string json, IConfig config, IRssParser parser)
         {
             //Ex.
             //https://itunes.apple.com/lookup?id=278981407&entity=podcast

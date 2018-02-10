@@ -19,12 +19,12 @@ namespace ObjectExtensions
         public static void SetField(this object obj, Type fieldType, object value)
         {
             Type type = obj.GetType();
-            IEnumerable<PropertyInfo> properties = type.GetProperties(BindingFlags.GetField | BindingFlags.NonPublic);
-            foreach(PropertyInfo propertyInfo in properties)
+            IEnumerable<FieldInfo> properties = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach(FieldInfo fieldInfo in properties)
             {
-                if(propertyInfo.PropertyType == fieldType)
+                if(fieldInfo.FieldType == fieldType)
                 {
-                    propertyInfo.SetValue(obj, value);
+                    fieldInfo.SetValue(obj, value);
                 }
             }
         }
