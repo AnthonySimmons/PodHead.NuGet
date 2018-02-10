@@ -13,31 +13,8 @@ namespace PodHead
 
     internal class PodcastCharts
     {
-        public static readonly Dictionary<string, int> PodcastGenreCodes = new Dictionary<string, int> {
-            { "All", 0 },
-			{ "Arts", 1301 },
-			{ "Business", 1321 },
-			{ "Comedy", 1303 },
-			{ "Education", 1304 },
-			{ "Games & Hobbies", 1323 },
-			{ "Government & Organizations", 1325 },
-			{ "Health", 1307 },
-			{ "Kids & Family", 1305 },
-			{ "Music", 1310 },
-			{ "News & Politics", 1311 },
-			{ "Religion & Spirituality", 1314 },
-			{ "Science & Medicine", 1315 },
-			{ "Society & Culture", 1324 },
-			{ "Sports & Recreation", 1316 },
-			{ "Technology", 1318 },
-			{ "TV & Film", 1309 },
-		};
-       
-
         private readonly Parser _parser;
-
-		public ConcurrentList<Subscription> Podcasts; 
-
+       
         //https://itunes.apple.com/lookup?id=260190086&entity=podcast
         private const string iTunesLookupUrlFormat = "https://itunes.apple.com/lookup?id={0}&entity={1}";
 
@@ -46,13 +23,7 @@ namespace PodHead
         public const string iTunesPodcastFormatAll = "https://itunes.apple.com/us/rss/toppodcasts/limit={0}/xml";
 
         private const string EntityPodcast = "podcast";
-
-        public int Limit { get; set; }
-
-        public string Genre { get; set; }
-
-        public const int DefaultLimit = 10;
-
+        
         public event PodcastSourceUpdateEventHandler PodcastSourceUpdated;
 
         public event ErrorEventHandler ErrorEncountered;
@@ -63,18 +34,11 @@ namespace PodHead
 
         public PodcastCharts(IConfig config, Parser parser)
 		{
-			Limit = DefaultLimit;
-			Genre = "Comedy";
-			Podcasts = new ConcurrentList<Subscription>();
             _config = config;
             _parser = parser;
             _errorLogger = ErrorLogger.Get(_config);
 		}
-
-        public void ClearPodcasts()
-        {
-            Podcasts.Clear();
-        }
+        
 
         private static string GetPodcastInfoJson(string podcastId)
         {
@@ -92,11 +56,11 @@ namespace PodHead
             return json;
         }
 
-        public static List<Subscription> DeserializeSubscriptions(string json, IConfig config, Parser parser)
+        public static List<PodcastFeed> DeserializeFeeds(string json, IConfig config, Parser parser)
         {
             //Ex.
             //https://itunes.apple.com/lookup?id=278981407&entity=podcast
-            var subscriptions = new List<Subscription>();
+            var subscriptions = new List<PodcastFeed>();
                         
             string feedUrl = string.Empty;
             JToken rootToken = JObject.Parse(json);
@@ -104,7 +68,7 @@ namespace PodHead
 
             foreach (var subToken in resultsToken)
             {
-                var sub = new Subscription(config);
+                var sub = new PodcastFeed(config);
                 sub.RssLink = (string)subToken["feedUrl"];
                 sub.Category = "Podcasts";
                 sub.Title = (string)subToken["collectionName"];
@@ -131,24 +95,24 @@ namespace PodHead
             return id;
         }
 
-        private string GetiTunesSourceUrl()
+        private string GetiTunesSourceUrl(PodcastGenre genre, int limit)
         {
             var url = string.Empty;
-            if (PodcastGenreCodes[Genre] != 0)
+            if (genre != 0)
             {
-                url = string.Format(iTunesPodcastFormatGenre, Limit, PodcastGenreCodes[Genre]);
+                url = string.Format(iTunesPodcastFormatGenre, limit, (int)genre);
             }
             else
             {
-                url = string.Format(iTunesPodcastFormatAll, Limit);
+                url = string.Format(iTunesPodcastFormatAll, limit);
             }
             return url;
         }
 
-        private string GetiTunesSourceRss()
+        private string GetiTunesSourceRss(PodcastGenre genre, int limit)
         {
             var rss = string.Empty;
-            var url = GetiTunesSourceUrl();
+            var url = GetiTunesSourceUrl(genre, limit);
             var webClient = new WebClient();
 
             Stream st = webClient.OpenRead(url);
@@ -161,48 +125,52 @@ namespace PodHead
             return rss;
         }
 
-        private Subscription GetiTunesPodcasts()
+        private PodcastFeed GetiTunesPodcasts(PodcastGenre genre, int limit)
         {
-            var url = GetiTunesSourceUrl();
+            var url = GetiTunesSourceUrl(genre, limit);
 
-            var sourceSub = new Subscription(_config)
+            var sourceSub = new PodcastFeed(_config)
             {
                 RssLink = url,
-                Title = Genre.ToString(),
+                Title = genre.ToString(),
                 Category = "iTunes",
-                MaxItems = Limit,
+                MaxItems = limit,
             };
-            _parser.LoadSubscription(sourceSub, Limit);
+            _parser.LoadSubscription(sourceSub, limit);
 
             return sourceSub;
         }
 
-        private void GetPodcasts()
+        public IList<PodcastFeed> GetPodcasts(PodcastGenre genre, int limit)
         {
             try
             {
-                var podcastsChart = GetiTunesPodcasts();
-                
+                var podcastsChart = GetiTunesPodcasts(genre, limit);
+                List<PodcastFeed> feeds = new List<PodcastFeed>();
                 int count = 0;
                 foreach (var podcast in podcastsChart.Items)
-                {                    
-                    GetPodcastFromItem(podcast);
+                {
+                    var podcastId = GetPodcastId(podcast.Link);
+                    var podcastInfoJson = GetPodcastInfoJson(podcastId);
+                    var subscriptions = DeserializeFeeds(podcastInfoJson, _config, _parser);
+                    var sub = subscriptions.FirstOrDefault();
+
+                    if (sub != null && feeds.FirstOrDefault(p => p.Title == sub.Title) == null)
+                    {
+                        feeds.Add(sub);
+                    }
 
                     double percent = (double)(++count) / (double)podcastsChart.Items.Count;
                     OnPodcastSourceUpdated(percent);
                 }
+                return feeds;
             }
             catch (Exception ex)
             {
                 _errorLogger.Log(ex);
                 OnErrorEncountered(ex.Message);
+                return null;
             }
-        }
-
-        private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            double percent = (double)(Podcasts.Count+1) / (double)Limit;
-            OnPodcastSourceUpdated(percent);
         }
 
 		private void OnErrorEncountered(string message)
@@ -223,32 +191,9 @@ namespace PodHead
 			}
 		}
 
-        private void Bw_DoWork(object sender, DoWorkEventArgs e)
+        public void GetPodcastsAsync(PodcastGenre genre, int limit)
         {
-            var item = e.Argument as Item;
-            if(item != null)
-            {
-                GetPodcastFromItem(item);
-            }
-        }
-
-        private void GetPodcastFromItem(Item podcastItem)
-        {
-            var podcastId = GetPodcastId(podcastItem.Link);
-            var podcastInfoJson = GetPodcastInfoJson(podcastId);
-            var subscriptions = DeserializeSubscriptions(podcastInfoJson, _config, _parser);
-            var sub = subscriptions.FirstOrDefault();
-            
-            if (sub != null && Podcasts.FirstOrDefault(p => p.Title == sub.Title) == null)
-            {
-                Podcasts.Add(sub);
-            }
-
-        }
-
-        public void GetPodcastsAsync()
-        {
-            var thread = new Thread(GetPodcasts);
+            var thread = new Thread(() => GetPodcasts(genre, limit));
             thread.Start();
         }
 

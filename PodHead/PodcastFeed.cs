@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace PodHead
 {
-    internal class Subscription
+    public class PodcastFeed
     {
         public string Feed { get; set; }
 
@@ -24,7 +24,7 @@ namespace PodHead
 
         public int Update { get; set; }
         
-        public IList<Item> Items { get; set; }
+        public IList<PodcastEpisode> Items { get; set; }
 
         public string SiteLink { get; set; }
 
@@ -89,7 +89,7 @@ namespace PodHead
 
         public const int DefaultMaxItems = 10;
 
-        public Subscription(IConfig config)
+        public PodcastFeed(IConfig config)
         {
             _config = config;
 
@@ -102,7 +102,7 @@ namespace PodHead
             PubDate = string.Empty;
             Ttl = string.Empty;
 
-            Items = new ConcurrentList<Item>();
+            Items = new ConcurrentList<PodcastEpisode>();
             SiteLink = string.Empty;
             ImageUrl = string.Empty;
             Category = string.Empty;
@@ -111,12 +111,12 @@ namespace PodHead
             CheckImageDownload();
         }
 
-        public IEnumerable<Item> GetDownloads()
+        public IEnumerable<PodcastEpisode> GetDownloads()
         {
             return Items.Where(it => it.IsDownloaded);
         }
          
-        public IEnumerable<Item> GetPlayed()
+        public IEnumerable<PodcastEpisode> GetPlayed()
         {
             return Items.Where(it => it.PercentPlayed > double.Epsilon);
         }       

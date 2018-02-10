@@ -74,7 +74,7 @@ namespace PodHead
         }
         
 
-        public bool LoadSubscriptionAsync(Subscription sub)
+        public bool LoadSubscriptionAsync(PodcastFeed sub)
         {
             string url = sub.RssLink;
             bool success = true;
@@ -94,7 +94,7 @@ namespace PodHead
             return success;
         }
 
-        public bool LoadSubscription(Subscription sub, int maxItems)
+        public bool LoadSubscription(PodcastFeed sub, int maxItems)
         {
             string url = sub.RssLink;
             bool success = true;
@@ -120,7 +120,7 @@ namespace PodHead
             return success;
         }
 
-        private bool LoadSubscription(Subscription sub, string rss, int maxItems)
+        private bool LoadSubscription(PodcastFeed sub, string rss, int maxItems)
         {
             bool success = false;
             try
@@ -152,7 +152,7 @@ namespace PodHead
             return success;
         }
 
-        private static void DownloadImage(Subscription sub)
+        private static void DownloadImage(PodcastFeed sub)
         {
             if (!sub.ImageLoaded)
             {
@@ -192,7 +192,7 @@ namespace PodHead
             }
         }
 
-        private void OnSubscriptionParsedComplete(Subscription subscription)
+        private void OnSubscriptionParsedComplete(PodcastFeed subscription)
         {
             var copy = SubscriptionParsedComplete;
             if(copy != null)
@@ -243,7 +243,7 @@ namespace PodHead
             return attribute;
         }
 
-        private bool LoadXMLRSS2_0(Subscription sub, string rss, int maxItems)
+        private bool LoadXMLRSS2_0(PodcastFeed sub, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -281,11 +281,11 @@ namespace PodHead
                         if (counter++ >= maxItems) { break; }
 
                         string itemTitle = GetXmlElementValue(item, "title");
-                        Item it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
+                        PodcastEpisode it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
                         bool noItem = it == null;
                         if (noItem)
                         {
-                            it = new Item(_config);
+                            it = new PodcastEpisode(_config);
                             it.Title = itemTitle;
                         }
                         it.Link = GetXmlElementValue(item, "link");
@@ -305,12 +305,12 @@ namespace PodHead
                             TimeSpan durationTimeSpan;
                             if (TimeSpan.TryParse(durationString, out durationTimeSpan))
                             {
-                                it.Duration = (int)durationTimeSpan.TotalMilliseconds;
+                                it.DurationMs = (int)durationTimeSpan.TotalMilliseconds;
                             }
                         }
 
                         it.RowNum = counter;
-                        it.ParentSubscription = sub;
+                        it.ParentFeed = sub;
 
                         it.IsLoaded = true;
                         sub.ItemsLoaded = true;
@@ -331,7 +331,7 @@ namespace PodHead
             return success;
         }
 
-        private bool LoadXMLRSS1_0(Subscription sub, string rss, int maxItems)
+        private bool LoadXMLRSS1_0(PodcastFeed sub, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -357,11 +357,11 @@ namespace PodHead
                         if (count++ >= maxItems) { break; }
                         string itemTitle = GetXmlElementValue(item, "title");
 
-                        Item it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
+                        PodcastEpisode it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
                         bool noItem = it == null;
                         if (noItem)
                         {
-                            it = new Item(_config);
+                            it = new PodcastEpisode(_config);
                             it.Title = itemTitle;
                         }
 
@@ -371,7 +371,7 @@ namespace PodHead
                         it.Guid = GetXmlElementValue(item, "guid");
                         it.PubDate = GetXmlElementValue(item, "pubDate");
                         it.RowNum = count;
-                        it.ParentSubscription = sub;
+                        it.ParentFeed = sub;
                         sub.ItemsLoaded = true;
                         it.IsLoaded = true;
                         sub.Items.Add(it);
@@ -390,7 +390,7 @@ namespace PodHead
         
 
 
-        private bool LoadXMLAtom(Subscription sub, string rss, int maxItems)
+        private bool LoadXMLAtom(PodcastFeed sub, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -412,11 +412,11 @@ namespace PodHead
                     if (count++ >= maxItems) { break; }
 
                     string itemTitle = GetXmlElementValue(entry, "title");
-                    Item it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
+                    PodcastEpisode it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
                     bool noItem = it == null;
                     if (noItem)
                     {
-                        it = new Item(_config);
+                        it = new PodcastEpisode(_config);
                         it.Title = itemTitle;
                     }
 
@@ -425,18 +425,8 @@ namespace PodHead
                     it.PubDate = GetXmlElementValue(entry, "updated");
                     
                     it.Link = GetXmlAttribute(entry["link"], "href");
-                    if (entry["author"] != null)
-                    {
-                        foreach (XmlNode authorNode in entry["author"])
-                        {
-                            var auth = new author();
-                            auth.name = GetXmlElementValue(authorNode, "name");
-                            auth.email = GetXmlElementValue(authorNode, "email");
-                            it.Authors.Add(auth);
-                        }
-                    }
                     it.RowNum = count;
-                    it.ParentSubscription = sub;
+                    it.ParentFeed = sub;
                     sub.ItemsLoaded = true;
                     it.IsLoaded = true;
                     sub.Items.Add(it);

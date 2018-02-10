@@ -11,7 +11,7 @@ using System.Xml;
 namespace PodHead
 {
 
-    internal class Feeds
+    internal class PodcastFeedManager
     {
         private const string PodHead = "PodHead";
         private const string Subscription = "Subscription";
@@ -33,8 +33,8 @@ namespace PodHead
      
         private readonly ErrorLogger _errorLogger;
 
-        private Item _nowPlaying;
-        public Item NowPlaying
+        private PodcastEpisode _nowPlaying;
+        public PodcastEpisode NowPlaying
         {
             get { return _nowPlaying; }
             set
@@ -44,7 +44,7 @@ namespace PodHead
             }
         }
         
-        public Feeds(Parser parser, IConfig config)
+        public PodcastFeedManager(IConfig config, Parser parser)
         {
             _config = config;
             _parser = parser;
@@ -53,7 +53,7 @@ namespace PodHead
         }
         
 
-        private void Parser_SubscriptionParsedComplete(Subscription subscription)
+        private void Parser_SubscriptionParsedComplete(PodcastFeed subscription)
         {
             if (ContainsSubscription(subscription.Title))
             {
@@ -67,7 +67,7 @@ namespace PodHead
 
         public int MaxItems = 25;
 
-        public ConcurrentList<Subscription> Subscriptions = new ConcurrentList<Subscription>();
+        public ConcurrentList<PodcastFeed> Subscriptions = new ConcurrentList<PodcastFeed>();
 
 		public List<string> Categories 
 		{
@@ -77,16 +77,16 @@ namespace PodHead
 			}
 		}
        
-        public List<Subscription> ChannelsByCategory(string category)
+        public List<PodcastFeed> ChannelsByCategory(string category)
         {
             return Subscriptions.Where(ch => ch.Category == category).ToList();
         }
 
-        public List<Item> DownloadedItems
+        public List<PodcastEpisode> DownloadedItems
         {
             get
             {
-                var downloads = new List<Item>();
+                var downloads = new List<PodcastEpisode>();
                 
                 foreach(var sub in Subscriptions)
                 {
@@ -102,7 +102,7 @@ namespace PodHead
         {
             if (!String.IsNullOrEmpty(name))
             {
-                foreach (Subscription sub in Subscriptions)
+                foreach (PodcastFeed sub in Subscriptions)
                 {
                     if (sub.Title == name)
                     {
@@ -115,7 +115,7 @@ namespace PodHead
             }
         }
 
-        public void AddChannel(Subscription sub)
+        public void AddChannel(PodcastFeed sub)
         {
             if (!String.IsNullOrEmpty(sub.RssLink) && !ContainsSubscription(sub.Title))
             {
@@ -124,9 +124,9 @@ namespace PodHead
             }
         }
 
-        public IEnumerable<Item> GetDownloads()
+        public IEnumerable<PodcastEpisode> GetDownloads()
         {
-            var downloads = new List<Item>();
+            var downloads = new List<PodcastEpisode>();
             foreach(var sub in Subscriptions)
             {
                 downloads.AddRange(sub.GetDownloads());
@@ -144,7 +144,7 @@ namespace PodHead
         {
             subsParsed = 0;
             int count = 0;
-            foreach (Subscription sub in Subscriptions)
+            foreach (PodcastFeed sub in Subscriptions)
             {
                 _parser.LoadSubscription(sub, MaxItems);
 
@@ -158,7 +158,7 @@ namespace PodHead
 
         int subsParsed = 0;
         
-        private void OnSubscriptionRemoved(Subscription subscription)
+        private void OnSubscriptionRemoved(PodcastFeed subscription)
         {
             var copy = SubscriptionRemoved;
             if(copy != null)
@@ -167,7 +167,7 @@ namespace PodHead
             }
         }
 
-        private void OnSubscriptionAdded(Subscription subscription)
+        private void OnSubscriptionAdded(PodcastFeed subscription)
         {
             var copy = SubscriptionAdded;
             if(copy != null)
@@ -196,7 +196,7 @@ namespace PodHead
 
         private void Bw_DoWork(object sender, DoWorkEventArgs e)
         {
-            var sub = e.Argument as Subscription;
+            var sub = e.Argument as PodcastFeed;
             if (sub != null)
             {
                 _parser.LoadSubscriptionAsync(sub);
@@ -213,7 +213,7 @@ namespace PodHead
 
         public void setChannelFeed(string title, string feed)
         {
-            foreach (Subscription ch in Subscriptions)
+            foreach (PodcastFeed ch in Subscriptions)
             {
                 if (ch.Title == title)
                 {
@@ -222,7 +222,7 @@ namespace PodHead
             }
         }
 
-        public void ToggleSubscription(Subscription subscription)
+        public void ToggleSubscription(PodcastFeed subscription)
         {
             if (ContainsSubscription(subscription.Title))
             {
@@ -234,15 +234,15 @@ namespace PodHead
             }
         }
 
-        public Subscription GetSubscriptionFromItem(string itemTitle)
+        public PodcastFeed GetSubscriptionFromItem(string itemTitle)
         {
             return Subscriptions.FirstOrDefault(sub => sub.Items.Any(it => it.Title == itemTitle));
         }
 
-        public Item GetItem(string title)
+        public PodcastEpisode GetItem(string title)
         {
-            Subscription ch = Subscriptions.FirstOrDefault(m => m.Items.Any(p => p.Title == title));
-            Item it = null;
+            PodcastFeed ch = Subscriptions.FirstOrDefault(m => m.Items.Any(p => p.Title == title));
+            PodcastEpisode it = null;
             if (ch != null)
             {
                 it = ch.Items.FirstOrDefault(m => m.Title == title);
@@ -289,7 +289,7 @@ namespace PodHead
 
                 var podHeadElement = xmlDocument.CreateElement(PodHead);
                 
-                foreach(Subscription sub in Subscriptions.ToList())
+                foreach(PodcastFeed sub in Subscriptions.ToList())
                 {
                     var subElement = xmlDocument.CreateElement(Subscription);
 
@@ -305,14 +305,14 @@ namespace PodHead
                     subElement.AppendChild(subNameElement);
                     subElement.AppendChild(subUrlElement);
 
-                    foreach(Item it in sub.GetPlayed().ToList())
+                    foreach(PodcastEpisode it in sub.GetPlayed().ToList())
                     {
                         var playedItemsElement = xmlDocument.CreateElement(PlayedItems);
                         var itElement = xmlDocument.CreateElement(Item);
 
                         itElement.SetAttribute(Title, it.Title);
-                        itElement.SetAttribute(Duration, it.Duration.ToString());
-                        itElement.SetAttribute(Position, it.Position.ToString());
+                        itElement.SetAttribute(Duration, it.DurationMs.ToString());
+                        itElement.SetAttribute(Position, it.PositionPlayedMs.ToString());
                         itElement.SetAttribute(IsNowPlaying, it.IsNowPlaying.ToString());
                         playedItemsElement.AppendChild(itElement);
                         subElement.AppendChild(playedItemsElement);
@@ -365,7 +365,7 @@ namespace PodHead
                     var subscriptionElements = xmlDocument.GetElementsByTagName(Subscription);
                     foreach(XmlElement subElement in subscriptionElements)
                     {
-                        Subscription subscription = new Subscription(_config)
+                        PodcastFeed subscription = new PodcastFeed(_config)
                         {
                             Category = Convert.ToString(subElement[CategoryName].InnerText),
                             Title = Convert.ToString(subElement[SubscriptionName].InnerText),
@@ -375,13 +375,13 @@ namespace PodHead
                         var playedItems = subElement.GetElementsByTagName(Item);
                         foreach(XmlNode item in playedItems)
                         {
-                            Item it = new Item(_config)
+                            PodcastEpisode it = new PodcastEpisode(_config)
                             {
                                 Title = Convert.ToString(item.Attributes[Title].Value),
-                                Duration = Convert.ToInt32(item.Attributes[Duration].Value),
-                                Position = Convert.ToInt32(item.Attributes[Position].Value),
+                                DurationMs = Convert.ToInt32(item.Attributes[Duration].Value),
+                                PositionPlayedMs = Convert.ToInt32(item.Attributes[Position].Value),
                                 IsNowPlaying = Convert.ToBoolean(item.Attributes[IsNowPlaying].Value),
-                                ParentSubscription = subscription
+                                ParentFeed = subscription
                             };
                             subscription.Items.Add(it);
 
@@ -403,9 +403,9 @@ namespace PodHead
 
         #endregion Save and Load
 
-        public Subscription findChannelName(string name)
+        public PodcastFeed findChannelName(string name)
         {
-            foreach (Subscription ch in Subscriptions)
+            foreach (PodcastFeed ch in Subscriptions)
             {
                 if (name == ch.Title)
                 {

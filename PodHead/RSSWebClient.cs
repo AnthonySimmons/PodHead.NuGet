@@ -8,11 +8,11 @@ namespace PodHead
 {
     class RssWebClient : WebClient
     {
-        public Subscription Subscription { get; set; }
+        public PodcastFeed Subscription { get; set; }
 
         public int MaxItems { get; set; }
 
-        public RssWebClient(Subscription subscription)
+        public RssWebClient(PodcastFeed subscription)
         {
             Subscription = subscription;
             MaxItems = subscription.MaxItems;

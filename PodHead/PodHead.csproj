@@ -52,14 +52,15 @@
     <Compile Include="ConcurrentList.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="IConfig.cs" />
+    <Compile Include="PodcastGenres.cs" />
     <Compile Include="PodcastSearch.cs" />
     <Compile Include="PodHead.cs" />
     <Compile Include="RssWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Subscription.cs" />
+    <Compile Include="PodcastFeed.cs" />
     <Compile Include="ErrorLogger.cs" />
-    <Compile Include="Feeds.cs" />
+    <Compile Include="PodcastFeedManager.cs" />
     <Compile Include="PodcastCharts.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

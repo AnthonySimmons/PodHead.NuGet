@@ -7,38 +7,34 @@ using System.Net;
 namespace PodHead
 {
 
-    internal class Item
+    public class PodcastEpisode
     {
         private readonly IConfig _config;
 
-        public string Title { get; set; }
+        public string Title { get; internal set; }
 
-        public string Description { get; set; }
+        public string Description { get; internal set; }
 
-        public string Link { get; set; }
+        public string Link { get; internal set; }
 
-        public string Guid { get; set; }
+        public string Guid { get; internal set; }
 
-        public string PubDate { get; set; }
+        public string PubDate { get; internal set; }
 
-        public DateTime DownloadDate { get; set; }
+        public DateTime DownloadDate { get; internal set; }
      
-        public ConcurrentList<author> Authors = new ConcurrentList<author>();
-        
-        public bool Read { get; set; }
-
-        public Subscription ParentSubscription { get; set; }
+        public PodcastFeed ParentFeed { get; internal set; }
         
         public int RowNum;
 
         private int _position;
-        public int Position
+        public int PositionPlayedMs
         {
             get
             {
                 return _position;
             }
-            set
+            internal set
             {
                 if(value != _position)
                 {
@@ -50,25 +46,25 @@ namespace PodHead
 
         public string GetFormattedDurationString()
         {
-            return TimeSpan.FromMilliseconds(Duration).ToString(@"hh\:mm\:ss");
+            return TimeSpan.FromMilliseconds(DurationMs).ToString(@"hh\:mm\:ss");
         }
 
         public string GetFormattedPositionString()
         {
-            return TimeSpan.FromMilliseconds(Position).ToString(@"hh\:mm\:ss");
+            return TimeSpan.FromMilliseconds(PositionPlayedMs).ToString(@"hh\:mm\:ss");
         }
         
         /// <summary>
         /// Media duration in Milliseconds.
         /// </summary>
         private int _duration;
-        public int Duration
+        public int DurationMs
         {
             get
             {
                 return _duration;
             }
-            set
+            internal set
             {
                 if(value != _duration)
                 {
@@ -78,19 +74,22 @@ namespace PodHead
             }
         }
 
+        /// <summary>
+        /// Percent at which this item has been played.
+        /// </summary>
         public double PercentPlayed
         {
             get
             {
-                if(Duration == 0)
+                if(DurationMs == 0)
                 {
                     return 0;
                 }
-                return 100.0 * (double)Position / (double)Duration;
+                return 100.0 * (double)PositionPlayedMs / (double)DurationMs;
             }
-            set
+            internal set
             {
-                Position = (int)(value * Duration);
+                PositionPlayedMs = (int)(value * DurationMs);
                 OnPercentPlayedChanged();
             }
         }
@@ -138,7 +137,7 @@ namespace PodHead
             {
                 return _isLoaded;
             }
-            set
+            internal set
             {
                 _isLoaded = value;
                 if(_isLoaded)
@@ -151,13 +150,13 @@ namespace PodHead
             }
         }
                 
-        public bool IsNowPlaying { get; set; }
+        public bool IsNowPlaying { get; internal set; }
 
         private bool _isPlaying;
         public bool IsPlaying
         {
             get { return _isPlaying; }
-            set
+            internal set
             {
                 if (_isPlaying != value)
                 {
@@ -167,7 +166,7 @@ namespace PodHead
             }
         }
 
-		public Item(IConfig config)
+		public PodcastEpisode(IConfig config)
 		{
 			Title = string.Empty;
 			Description = string.Empty;
