@@ -1,13 +1,16 @@
 ﻿
 
+using NSubstitute;
 using NUnit.Framework;
+using ObjectExtensions;
+using PodHead.Interfaces;
 using System;
 using System.Collections.Generic;
 
 namespace PodHead.UnitTest
 {
     [TestFixture]
-    public class PodHeadTests
+    internal class PodHeadTests
     {
         public static IEnumerable<TestCaseData> BadCtorArgsTestData
         {
@@ -42,9 +45,11 @@ namespace PodHead.UnitTest
         }
 
         [Test, AutoFixtureSubstitute]
-        public void Search_Should(PodHead sut)
+        public void Search_ShouldInvokePodcastSearch(PodHead sut, IPodcastSearch podcastSearch, string searchTerm, uint limit)
         {
-            sut.Search("blah", 25);
+            sut.SetField(typeof(IPodcastSearch), podcastSearch);
+            sut.Search(searchTerm, limit);
+            podcastSearch.Received(1).Search(searchTerm, limit);
         }
 
     }

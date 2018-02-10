@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoFixtureSubstituteAttribute.cs" />
     <Compile Include="PodHeadTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -67,6 +68,10 @@
     <ProjectReference Include="..\..\PodHead\PodHead.csproj">
       <Project>{80647706-98d4-44c6-b7f9-a03287e3ba29}</Project>
       <Name>PodHead</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ObjectExtensions\ObjectExtensions.csproj">
+      <Project>{9d88f717-e60e-4a45-b99d-d6f90e0d2b35}</Project>
+      <Name>ObjectExtensions</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

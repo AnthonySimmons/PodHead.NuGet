@@ -1,17 +1,19 @@
 ﻿
+using PodHead.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace PodHead
 {
     public class PodHead
     {
-        private readonly PodcastCharts _podcastCharts;
+        private readonly IPodcastCharts _podcastCharts;
 
-        private readonly PodcastSearch _podcastSearch;
+        private readonly IPodcastSearch _podcastSearch;
 
         private readonly PodcastFeedManager _feedManager;
 
-        private readonly Parser _parser;
+        private readonly IParser _parser;
 
         private readonly IConfig _config;
 
@@ -35,7 +37,7 @@ namespace PodHead
         /// <param name="searchTerm">Term to search for.</param>
         /// <param name="maxNumberOfFeeds">Max number of Feeds to include in the results. (Defaults to 10).</param>
         /// <returns>Collection of podcast feed search results.</returns>
-        public IEnumerable<PodcastFeed> Search(string searchTerm, int maxNumberOfFeeds = 10)
+        public IEnumerable<PodcastFeed> Search(string searchTerm, uint maxNumberOfFeeds = 10)
         {
             return _podcastSearch.Search(searchTerm, maxNumberOfFeeds);
         }
@@ -46,7 +48,7 @@ namespace PodHead
         /// <param name="genre">Genre for which to read the top charts.</param>
         /// <param name="maxPodcastLimit">Max number of podcasts to read from the top charts.</param>
         /// <returns>Collection of podcast top charts results.</returns>
-        public IEnumerable<PodcastFeed> GetTopCharts(PodcastGenre genre, int maxPodcastLimit = 10)
+        public IEnumerable<PodcastFeed> GetTopCharts(PodcastGenre genre, uint maxPodcastLimit = 10)
         {
             return _podcastCharts.GetPodcasts(genre, maxPodcastLimit);
         }
@@ -60,7 +62,7 @@ namespace PodHead
         /// True when successful, false otherwise.
         /// The Episodes are available in the <see cref="PodcastFeed"/> class.
         /// </returns>
-        public bool LoadPodcastFeed(PodcastFeed podcastFeed, int maxEpisodeLimit = 10)
+        public bool LoadPodcastFeed(PodcastFeed podcastFeed, uint maxEpisodeLimit = 10)
         {
             return _parser.LoadPodcastFeed(podcastFeed, maxEpisodeLimit);
         }

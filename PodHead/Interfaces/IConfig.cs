@@ -1,6 +1,6 @@
 ﻿
 
-namespace PodHead
+namespace PodHead.Interfaces
 {
     public interface IConfig
     {

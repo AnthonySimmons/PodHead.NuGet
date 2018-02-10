@@ -2,12 +2,11 @@
 using System.IO;
 using System.Net;
 using System.Collections.Generic;
+using PodHead.Interfaces;
 
 namespace PodHead
 {
-        
-
-    internal class PodcastSearch
+    internal class PodcastSearch : IPodcastSearch
     {
         public event SearchResultsReceivedEventHandler SearchResultReceived;
 
@@ -19,18 +18,18 @@ namespace PodHead
         
         private readonly IConfig _config;
 
-        private readonly Parser _parser;
+        private readonly IParser _parser;
 
         private readonly ErrorLogger _errorLogger;
         
-        public PodcastSearch(IConfig config, Parser parser)
+        public PodcastSearch(IConfig config, IParser parser)
         {
             _config = config;
             _parser = parser;
             _errorLogger = ErrorLogger.Get(_config);
         }
 
-        public void SearchAsync(string searchTerm, int maxNumberOfFeeds)
+        public void SearchAsync(string searchTerm, uint maxNumberOfFeeds)
         {
             try
             {
@@ -48,7 +47,7 @@ namespace PodHead
             }
         }
 
-        public IList<PodcastFeed> Search(string searchTerm, int maxNumberOfFeeds)
+        public IEnumerable<PodcastFeed> Search(string searchTerm, uint maxNumberOfFeeds)
         {
             try
             {
@@ -94,7 +93,7 @@ namespace PodHead
             SearchResultReceived?.Invoke(subscriptions);
         }
 
-        private static string GetSearchUrl(string searchTerm, int maxNumberOfFeeds)
+        private static string GetSearchUrl(string searchTerm, uint maxNumberOfFeeds)
         {
             return string.Format(iTunesSearchUrlFormat, searchTerm, maxNumberOfFeeds);
         }

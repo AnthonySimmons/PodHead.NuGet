@@ -10,7 +10,7 @@ namespace PodHead
     {
         public PodcastFeed Subscription { get; set; }
 
-        public int MaxItems { get; set; }
+        public uint MaxItems { get; set; }
 
         public RssWebClient(PodcastFeed subscription)
         {

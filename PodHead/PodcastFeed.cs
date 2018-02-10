@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PodHead.Interfaces;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -50,7 +51,7 @@ namespace PodHead
 
         public bool ItemsLoaded { get; internal set; }
 
-        public int MaxItems { get; internal set; }
+        public uint MaxItems { get; internal set; }
 
         public bool ImageLoaded { get; internal set; }
 

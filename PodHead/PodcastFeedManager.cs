@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using PodHead.Interfaces;
 
 namespace PodHead
 {
@@ -27,7 +28,7 @@ namespace PodHead
 
         private readonly IConfig _config;
 
-        private readonly Parser _parser;
+        private readonly IParser _parser;
 
         public event EventHandler AllFeedsParsed;
      
@@ -44,7 +45,7 @@ namespace PodHead
             }
         }
         
-        public PodcastFeedManager(IConfig config, Parser parser)
+        public PodcastFeedManager(IConfig config, IParser parser)
         {
             _config = config;
             _parser = parser;
@@ -65,7 +66,7 @@ namespace PodHead
             }
         }
 
-        public int MaxItems = 25;
+        public uint MaxItems = 25;
 
         public ConcurrentList<PodcastFeed> Subscriptions = new ConcurrentList<PodcastFeed>();
 

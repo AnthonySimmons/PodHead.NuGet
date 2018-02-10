@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,13 +6,13 @@ using System.Net;
 using System.Threading;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using PodHead.Interfaces;
 
 namespace PodHead
 {
-
-    internal class PodcastCharts
+    internal class PodcastCharts : IPodcastCharts
     {
-        private readonly Parser _parser;
+        private readonly IParser _parser;
        
         //https://itunes.apple.com/lookup?id=260190086&entity=podcast
         private const string iTunesLookupUrlFormat = "https://itunes.apple.com/lookup?id={0}&entity={1}";
@@ -32,7 +31,7 @@ namespace PodHead
 
         private readonly ErrorLogger _errorLogger;
 
-        public PodcastCharts(IConfig config, Parser parser)
+        public PodcastCharts(IConfig config, IParser parser)
 		{
             _config = config;
             _parser = parser;
@@ -56,7 +55,7 @@ namespace PodHead
             return json;
         }
 
-        public static List<PodcastFeed> DeserializeFeeds(string json, IConfig config, Parser parser)
+        public static List<PodcastFeed> DeserializeFeeds(string json, IConfig config, IParser parser)
         {
             //Ex.
             //https://itunes.apple.com/lookup?id=278981407&entity=podcast
@@ -95,7 +94,7 @@ namespace PodHead
             return id;
         }
 
-        private string GetiTunesSourceUrl(PodcastGenre genre, int limit)
+        private string GetiTunesSourceUrl(PodcastGenre genre, uint limit)
         {
             var url = string.Empty;
             if (genre != 0)
@@ -109,7 +108,7 @@ namespace PodHead
             return url;
         }
 
-        private string GetiTunesSourceRss(PodcastGenre genre, int limit)
+        private string GetiTunesSourceRss(PodcastGenre genre, uint limit)
         {
             var rss = string.Empty;
             var url = GetiTunesSourceUrl(genre, limit);
@@ -125,7 +124,7 @@ namespace PodHead
             return rss;
         }
 
-        private PodcastFeed GetiTunesPodcasts(PodcastGenre genre, int limit)
+        private PodcastFeed GetiTunesPodcasts(PodcastGenre genre, uint limit)
         {
             var url = GetiTunesSourceUrl(genre, limit);
 
@@ -141,7 +140,7 @@ namespace PodHead
             return sourceSub;
         }
 
-        public IList<PodcastFeed> GetPodcasts(PodcastGenre genre, int limit)
+        public IEnumerable<PodcastFeed> GetPodcasts(PodcastGenre genre, uint limit)
         {
             try
             {
@@ -191,7 +190,7 @@ namespace PodHead
 			}
 		}
 
-        public void GetPodcastsAsync(PodcastGenre genre, int limit)
+        public void GetPodcastsAsync(PodcastGenre genre, uint limit)
         {
             var thread = new Thread(() => GetPodcasts(genre, limit));
             thread.Start();

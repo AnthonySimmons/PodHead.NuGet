@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using System.Net;
+using PodHead.Interfaces;
 
 namespace PodHead
 {
@@ -14,7 +15,7 @@ namespace PodHead
         Rss2 = 2,
     }
 
-    internal class Parser
+    internal class Parser : IParser
     {
         public event SubscriptionParsedCompleteEventHandler SubscriptionParsedComplete;
 
@@ -94,7 +95,7 @@ namespace PodHead
             return success;
         }
 
-        public bool LoadPodcastFeed(PodcastFeed sub, int maxItems)
+        public bool LoadPodcastFeed(PodcastFeed sub, uint maxItems)
         {
             string url = sub.RssLink;
             bool success = true;
@@ -119,7 +120,7 @@ namespace PodHead
             return success;
         }
 
-        public bool LoadPodcastFeedAsync(PodcastFeed sub, int maxItems)
+        public bool LoadPodcastFeedAsync(PodcastFeed sub, uint maxItems)
         {
             string url = sub.RssLink;
             bool success = true;
@@ -145,7 +146,7 @@ namespace PodHead
             return success;
         }
 
-        private bool LoadPodcastFeed(PodcastFeed sub, string rss, int maxItems)
+        private bool LoadPodcastFeed(PodcastFeed sub, string rss, uint maxItems)
         {
             bool success = false;
             try
@@ -268,7 +269,7 @@ namespace PodHead
             return attribute;
         }
 
-        private bool LoadXMLRSS2_0(PodcastFeed sub, string rss, int maxItems)
+        private bool LoadXMLRSS2_0(PodcastFeed sub, string rss, uint maxItems)
         {
             bool success = true;
             try
@@ -356,7 +357,7 @@ namespace PodHead
             return success;
         }
 
-        private bool LoadXMLRSS1_0(PodcastFeed sub, string rss, int maxItems)
+        private bool LoadXMLRSS1_0(PodcastFeed sub, string rss, uint maxItems)
         {
             bool success = true;
             try
@@ -415,7 +416,7 @@ namespace PodHead
         
 
 
-        private bool LoadXMLAtom(PodcastFeed sub, string rss, int maxItems)
+        private bool LoadXMLAtom(PodcastFeed sub, string rss, uint maxItems)
         {
             bool success = true;
             try
