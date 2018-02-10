@@ -26,5 +26,6 @@ namespace PodHead
     public delegate void ErrorEventHandler(string errorMessage);
 
     internal delegate void SearchResultsReceivedEventHandler(IList<PodcastFeed> subscriptions);
+    
 
 }

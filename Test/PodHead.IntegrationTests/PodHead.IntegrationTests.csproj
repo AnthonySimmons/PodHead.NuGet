@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8980C3A2-7228-48DD-988D-31E36E8AC999}</ProjectGuid>
+    <ProjectGuid>{E7AD1300-F5D4-44BB-B43C-968798F87C18}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PodHead.UnitTest</RootNamespace>
-    <AssemblyName>PodHead.UnitTest</AssemblyName>
+    <RootNamespace>PodHead.IntegrationTests</RootNamespace>
+    <AssemblyName>PodHead.IntegrationTests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,23 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoFixture, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AutoFixture.4.0.1\lib\net452\AutoFixture.dll</HintPath>
-    </Reference>
-    <Reference Include="AutoFixture.AutoNSubstitute, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AutoFixture.AutoNSubstitute.4.0.1\lib\net452\AutoFixture.AutoNSubstitute.dll</HintPath>
-    </Reference>
-    <Reference Include="AutoFixture.NUnit3, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AutoFixture.NUnit3.4.0.1\lib\net452\AutoFixture.NUnit3.dll</HintPath>
-    </Reference>
-    <Reference Include="NSubstitute, Version=2.0.3.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NSubstitute.2.0.3\lib\net45\NSubstitute.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -56,22 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PodHeadAutoSubstitute.cs" />
-    <Compile Include="PodHeadUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\PodHead\PodHead.csproj">
       <Project>{80647706-98d4-44c6-b7f9-a03287e3ba29}</Project>
       <Name>PodHead</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ObjectExtensions\ObjectExtensions.csproj">
-      <Project>{9d88f717-e60e-4a45-b99d-d6f90e0d2b35}</Project>
-      <Name>ObjectExtensions</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

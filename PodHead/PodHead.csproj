@@ -51,7 +51,6 @@
   <ItemGroup>
     <Compile Include="ConcurrentList.cs" />
     <Compile Include="Delegates.cs" />
-    <Compile Include="Interfaces\IConfig.cs" />
     <Compile Include="Interfaces\IRssParser.cs" />
     <Compile Include="Interfaces\IPodcastCharts.cs" />
     <Compile Include="Interfaces\IPodcastSearch.cs" />
@@ -59,13 +58,10 @@
     <Compile Include="PodcastGenres.cs" />
     <Compile Include="PodcastSearch.cs" />
     <Compile Include="PodHead.cs" />
-    <Compile Include="PodHeadConfig.cs" />
     <Compile Include="RssWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PodcastFeed.cs" />
-    <Compile Include="ErrorLogger.cs" />
-    <Compile Include="PodcastFeedManager.cs" />
     <Compile Include="PodcastCharts.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

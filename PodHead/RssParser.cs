@@ -19,13 +19,11 @@ namespace PodHead
     {
         public event SubscriptionParsedCompleteEventHandler SubscriptionParsedComplete;
 
-        private readonly IConfig _config;
-        private readonly ErrorLogger _errorLogger;
+        public event ErrorEventHandler ErrorEventHandler;
 
-        public RssParser(IConfig config)
+        public virtual void OnError(string errorMessage)
         {
-            _config = config;
-            _errorLogger = ErrorLogger.Get(_config);
+            ErrorEventHandler?.Invoke(errorMessage);
         }
 
         private static FeedType GetFeedType(string rssString)
@@ -89,7 +87,7 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                _errorLogger.Log(ex);
+                OnError(ex.ToString());
                 success = false;
             }
             return success;
@@ -114,7 +112,7 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                _errorLogger.Log(ex);
+                OnError(ex.ToString());
                 success = false;
             }
             return success;
@@ -140,7 +138,7 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                _errorLogger.Log(ex);
+                OnError(ex.ToString());
                 success = false;
             }
             return success;
@@ -167,24 +165,14 @@ namespace PodHead
                             break;
                     }
                 }
-                DownloadImage(sub);
                 sub.IsLoaded = success;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 sub.HasErrors = true;
-                _errorLogger.Log(e);
+                OnError(ex.ToString());
             }
             return success;
-        }
-
-        private static void DownloadImage(PodcastFeed sub)
-        {
-            if (!sub.ImageLoaded)
-            {
-                DownloadImage(sub.ImageUrl, sub.ImageFilePath);
-                sub.ImageLoaded = true;
-            }
         }
 
         private static void DownloadImage(string imageUrl, string imageFilePath)
@@ -214,7 +202,7 @@ namespace PodHead
             }
             catch(Exception ex)
             {
-                _errorLogger.Log(ex);
+                OnError(ex.ToString());
             }
         }
 
@@ -311,7 +299,7 @@ namespace PodHead
                         bool noItem = it == null;
                         if (noItem)
                         {
-                            it = new PodcastEpisode(_config);
+                            it = new PodcastEpisode();
                             it.Title = itemTitle;
                         }
                         it.Link = GetXmlElementValue(item, "link");
@@ -350,7 +338,7 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                _errorLogger.Log(ex);
+                OnError(ex.ToString());
                 success = false;
             }
             sub.HasErrors = !success;
@@ -387,7 +375,7 @@ namespace PodHead
                         bool noItem = it == null;
                         if (noItem)
                         {
-                            it = new PodcastEpisode(_config);
+                            it = new PodcastEpisode();
                             it.Title = itemTitle;
                         }
 
@@ -407,7 +395,7 @@ namespace PodHead
             }
             catch(Exception ex)
             {
-                _errorLogger.Log(ex);
+                OnError(ex.ToString());
                 success = false;                
             }
             sub.HasErrors = !success;
@@ -442,7 +430,7 @@ namespace PodHead
                     bool noItem = it == null;
                     if (noItem)
                     {
-                        it = new PodcastEpisode(_config);
+                        it = new PodcastEpisode();
                         it.Title = itemTitle;
                     }
 
@@ -460,7 +448,7 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                _errorLogger.Log(ex);
+                OnError(ex.ToString());
                 success = false;
             }
             sub.HasErrors = !success;

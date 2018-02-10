@@ -1,7 +1,5 @@
-﻿using PodHead.Interfaces;
+﻿
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace PodHead
 {
@@ -34,92 +32,40 @@ namespace PodHead
         public string Category { get; internal set; }
 
         public bool HasErrors { get; internal set; }
-
-        private bool isLoaded;
-        public bool IsLoaded
-        {
-            get { return isLoaded; }
-            internal set
-            {
-                isLoaded = value;
-                if(isLoaded)
-                {
-                    CheckImageDownload();
-                }
-            }
-        }
+        
+        public bool IsLoaded { get; internal set; }
 
         public bool ItemsLoaded { get; internal set; }
 
         public uint MaxItems { get; internal set; }
 
-        public bool ImageLoaded { get; internal set; }
-
-        public string ImageFilePath
-        {
-            get
-            {
-                return Path.Combine(_config.AppDataImageFolder, string.Format("{0}.{1}", Title, GetImageFileType()));
-            }
-        }
-
-        private string GetImageFileType()
-        {
-            var fileType = string.Empty;
-            if(!string.IsNullOrEmpty(ImageUrl))
-            {
-                var vals = ImageUrl.Split('.');
-                if(vals.Length > 0)
-                {
-                    fileType = vals[vals.Length - 1];
-                }
-            }
-            return fileType;
-        }
-
-        private void CheckImageDownload()
-        {
-            if(File.Exists(ImageFilePath))
-            {
-                ImageLoaded = true;                
-                ImageUrl = ImageFilePath;
-            }
-        }
-
-        private readonly IConfig _config;
-
         public const int DefaultMaxItems = 10;
 
-        public PodcastFeed(IConfig config)
+        public PodcastFeed()
+            : this(string.Empty, string.Empty, string.Empty, string.Empty,
+                   string.Empty, string.Empty, string.Empty, string.Empty, 
+                   string.Empty, string.Empty, string.Empty)
         {
-            _config = config;
+        }
 
-            Feed = string.Empty;
-            Version = string.Empty;
-            Title = string.Empty;
-            Description = string.Empty;
-            RssLink = string.Empty;
-            LastBuildDate = string.Empty;
-            PubDate = string.Empty;
-            Ttl = string.Empty;
-
-            PodcastEpisodes = new ConcurrentList<PodcastEpisode>();
-            SiteLink = string.Empty;
-            ImageUrl = string.Empty;
-            Category = string.Empty;
+        public PodcastFeed(string feed,     string version,       string title,   string description, 
+                           string rssLink,  string lastBuildDate, string pubDate, string ttl, 
+                           string siteLink, string imageUrl,      string category)
+        {
+            Feed = feed;
+            Version = version;
+            Title = title;
+            Description = description;
+            RssLink = rssLink;
+            LastBuildDate = lastBuildDate;
+            PubDate = pubDate;
+            Ttl = ttl;
+            SiteLink = siteLink;
+            ImageUrl = imageUrl;
+            Category = category;
             MaxItems = DefaultMaxItems;
 
-            CheckImageDownload();
-        }
-
-        public IEnumerable<PodcastEpisode> GetDownloads()
-        {
-            return PodcastEpisodes.Where(it => it.IsDownloaded);
-        }
-         
-        public IEnumerable<PodcastEpisode> GetPlayed()
-        {
-            return PodcastEpisodes.Where(it => it.PercentPlayed > double.Epsilon);
-        }       
+            PodcastEpisodes = new ConcurrentList<PodcastEpisode>();
+        } 
     }
 }

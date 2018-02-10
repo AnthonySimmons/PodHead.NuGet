@@ -16,17 +16,11 @@ namespace PodHead
 
         private const string iTunesSearchUrlFormat = @"https://itunes.apple.com/search?&term={0}&media=podcast&entity=podcast&limit={1}";
         
-        private readonly IConfig _config;
-
         private readonly IRssParser _parser;
-
-        private readonly ErrorLogger _errorLogger;
         
-        public PodcastSearch(IConfig config, IRssParser parser)
+        public PodcastSearch(IRssParser parser)
         {
-            _config = config;
             _parser = parser;
-            _errorLogger = ErrorLogger.Get(_config);
         }
 
         public void SearchAsync(string searchTerm, uint maxNumberOfFeeds)
@@ -42,7 +36,6 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                _errorLogger.Log(ex);
                 OnErrorEncountered(ex.Message);
             }
         }
@@ -60,7 +53,6 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                _errorLogger.Log(ex);
                 OnErrorEncountered(ex.Message);
                 return null;
             }
@@ -85,7 +77,7 @@ namespace PodHead
                 json = reader.ReadToEnd();
             }
 
-            return PodcastCharts.DeserializeFeeds(json, _config, _parser);
+            return PodcastCharts.DeserializeFeeds(json, _parser);
         }
 
 		private void OnSearchResultsReceived(IList<PodcastFeed> subscriptions)

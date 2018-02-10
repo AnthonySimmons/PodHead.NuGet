@@ -26,16 +26,10 @@ namespace PodHead
         public event PodcastSourceUpdateEventHandler PodcastSourceUpdated;
 
         public event ErrorEventHandler ErrorEncountered;
-
-        private readonly IConfig _config;
-
-        private readonly ErrorLogger _errorLogger;
-
-        public PodcastCharts(IConfig config, IRssParser parser)
+        
+        public PodcastCharts(IRssParser parser)
 		{
-            _config = config;
             _parser = parser;
-            _errorLogger = ErrorLogger.Get(_config);
 		}
         
 
@@ -55,7 +49,7 @@ namespace PodHead
             return json;
         }
 
-        public static List<PodcastFeed> DeserializeFeeds(string json, IConfig config, IRssParser parser)
+        public static List<PodcastFeed> DeserializeFeeds(string json, IRssParser parser)
         {
             //Ex.
             //https://itunes.apple.com/lookup?id=278981407&entity=podcast
@@ -67,7 +61,7 @@ namespace PodHead
 
             foreach (var subToken in resultsToken)
             {
-                var sub = new PodcastFeed(config);
+                var sub = new PodcastFeed();
                 sub.RssLink = (string)subToken["feedUrl"];
                 sub.Category = "Podcasts";
                 sub.Title = (string)subToken["collectionName"];
@@ -128,7 +122,7 @@ namespace PodHead
         {
             var url = GetiTunesSourceUrl(genre, limit);
 
-            var sourceSub = new PodcastFeed(_config)
+            var sourceSub = new PodcastFeed()
             {
                 RssLink = url,
                 Title = genre.ToString(),
@@ -151,7 +145,7 @@ namespace PodHead
                 {
                     var podcastId = GetPodcastId(podcast.Link);
                     var podcastInfoJson = GetPodcastInfoJson(podcastId);
-                    var subscriptions = DeserializeFeeds(podcastInfoJson, _config, _parser);
+                    var subscriptions = DeserializeFeeds(podcastInfoJson, _parser);
                     var sub = subscriptions.FirstOrDefault();
 
                     if (sub != null && feeds.FirstOrDefault(p => p.Title == sub.Title) == null)
@@ -166,7 +160,6 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                _errorLogger.Log(ex);
                 OnErrorEncountered(ex.Message);
                 return null;
             }

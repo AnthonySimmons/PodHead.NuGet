@@ -11,24 +11,13 @@ namespace PodHead
 
         private readonly IPodcastSearch _podcastSearch;
 
-        private readonly PodcastFeedManager _feedManager;
-
         private readonly IRssParser _parser;
-
-        private readonly IConfig _config;
-
-        public PodHead(string downloadFolder, string appDataFolder, string appDataImageFolder, string configFileName)
-            : this(new PodHeadConfig(downloadFolder, appDataFolder, appDataImageFolder, configFileName))
+       
+        public PodHead()
         {
-        }
-
-        public PodHead(IConfig config)
-        {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
-            _parser = new RssParser(_config);
-            _feedManager = new PodcastFeedManager(_config, _parser);
-            _podcastCharts = new PodcastCharts(_config, _parser);
-            _podcastSearch = new PodcastSearch(_config, _parser);
+            _parser = new RssParser();
+            _podcastCharts = new PodcastCharts(_parser);
+            _podcastSearch = new PodcastSearch(_parser);
         }
        
         /// <summary>
