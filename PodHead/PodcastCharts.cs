@@ -136,7 +136,7 @@ namespace PodHead
                 Category = "iTunes",
                 MaxItems = limit,
             };
-            _parser.LoadSubscription(sourceSub, limit);
+            _parser.LoadPodcastFeedAsync(sourceSub, limit);
 
             return sourceSub;
         }
@@ -148,7 +148,7 @@ namespace PodHead
                 var podcastsChart = GetiTunesPodcasts(genre, limit);
                 List<PodcastFeed> feeds = new List<PodcastFeed>();
                 int count = 0;
-                foreach (var podcast in podcastsChart.Items)
+                foreach (var podcast in podcastsChart.PodcastEpisodes)
                 {
                     var podcastId = GetPodcastId(podcast.Link);
                     var podcastInfoJson = GetPodcastInfoJson(podcastId);
@@ -160,7 +160,7 @@ namespace PodHead
                         feeds.Add(sub);
                     }
 
-                    double percent = (double)(++count) / (double)podcastsChart.Items.Count;
+                    double percent = (double)(++count) / (double)podcastsChart.PodcastEpisodes.Count;
                     OnPodcastSourceUpdated(percent);
                 }
                 return feeds;

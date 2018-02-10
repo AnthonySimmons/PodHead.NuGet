@@ -94,7 +94,32 @@ namespace PodHead
             return success;
         }
 
-        public bool LoadSubscription(PodcastFeed sub, int maxItems)
+        public bool LoadPodcastFeed(PodcastFeed sub, int maxItems)
+        {
+            string url = sub.RssLink;
+            bool success = true;
+            try
+            {
+                Stream rssStream;
+                using (var client = new RssWebClient(sub))
+                {
+                    rssStream = client.OpenRead(url);
+                }
+                using (var reader = new StreamReader(rssStream))
+                {
+                    string rss = reader.ReadToEnd();
+                    LoadPodcastFeed(sub, rss, maxItems);
+                }
+            }
+            catch (Exception ex)
+            {
+                _errorLogger.Log(ex);
+                success = false;
+            }
+            return success;
+        }
+
+        public bool LoadPodcastFeedAsync(PodcastFeed sub, int maxItems)
         {
             string url = sub.RssLink;
             bool success = true;
@@ -109,7 +134,7 @@ namespace PodHead
                 using (var reader = new StreamReader(rssStream))
                 {
                     string rss = reader.ReadToEnd();
-                    LoadSubscription(sub, rss, maxItems);
+                    LoadPodcastFeed(sub, rss, maxItems);
                 }
             }
             catch (Exception ex)
@@ -120,7 +145,7 @@ namespace PodHead
             return success;
         }
 
-        private bool LoadSubscription(PodcastFeed sub, string rss, int maxItems)
+        private bool LoadPodcastFeed(PodcastFeed sub, string rss, int maxItems)
         {
             bool success = false;
             try
@@ -182,7 +207,7 @@ namespace PodHead
                 var rssWebClient = sender as RssWebClient;
                 if (rssWebClient != null)
                 {
-                    LoadSubscription(rssWebClient.Subscription, rss, rssWebClient.MaxItems);
+                    LoadPodcastFeed(rssWebClient.Subscription, rss, rssWebClient.MaxItems);
                 }
                 OnSubscriptionParsedComplete(rssWebClient.Subscription);
             }
@@ -281,7 +306,7 @@ namespace PodHead
                         if (counter++ >= maxItems) { break; }
 
                         string itemTitle = GetXmlElementValue(item, "title");
-                        PodcastEpisode it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
+                        PodcastEpisode it = sub.PodcastEpisodes.FirstOrDefault(i => i.Title == itemTitle);
                         bool noItem = it == null;
                         if (noItem)
                         {
@@ -317,7 +342,7 @@ namespace PodHead
 
                         if (noItem)
                         {
-                            sub.Items.Add(it);
+                            sub.PodcastEpisodes.Add(it);
                         }
                     }
                 }
@@ -357,7 +382,7 @@ namespace PodHead
                         if (count++ >= maxItems) { break; }
                         string itemTitle = GetXmlElementValue(item, "title");
 
-                        PodcastEpisode it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
+                        PodcastEpisode it = sub.PodcastEpisodes.FirstOrDefault(i => i.Title == itemTitle);
                         bool noItem = it == null;
                         if (noItem)
                         {
@@ -374,7 +399,7 @@ namespace PodHead
                         it.ParentFeed = sub;
                         sub.ItemsLoaded = true;
                         it.IsLoaded = true;
-                        sub.Items.Add(it);
+                        sub.PodcastEpisodes.Add(it);
                     }
 
                 }
@@ -412,7 +437,7 @@ namespace PodHead
                     if (count++ >= maxItems) { break; }
 
                     string itemTitle = GetXmlElementValue(entry, "title");
-                    PodcastEpisode it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
+                    PodcastEpisode it = sub.PodcastEpisodes.FirstOrDefault(i => i.Title == itemTitle);
                     bool noItem = it == null;
                     if (noItem)
                     {
@@ -429,7 +454,7 @@ namespace PodHead
                     it.ParentFeed = sub;
                     sub.ItemsLoaded = true;
                     it.IsLoaded = true;
-                    sub.Items.Add(it);
+                    sub.PodcastEpisodes.Add(it);
                 }
             }
             catch (Exception ex)

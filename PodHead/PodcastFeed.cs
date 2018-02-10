@@ -6,39 +6,39 @@ namespace PodHead
 {
     public class PodcastFeed
     {
-        public string Feed { get; set; }
+        public string Feed { get; internal set; }
 
-        public string Version { get; set; }
+        public string Version { get; internal set; }
 
-        public string Title { get; set; }
+        public string Title { get; internal set; }
 
-        public string Description { get; set; }
+        public string Description { get; internal set; }
 
-        public string RssLink { get; set; }
+        public string RssLink { get; internal set; }
 
-        public string LastBuildDate { get; set; }
+        public string LastBuildDate { get; internal set; }
 
-        public string PubDate { get; set; }
+        public string PubDate { get; internal set; }
 
-        public string Ttl { get; set; }
+        public string Ttl { get; internal set; }
 
-        public int Update { get; set; }
+        public int Update { get; internal set; }
         
-        public IList<PodcastEpisode> Items { get; set; }
+        public IList<PodcastEpisode> PodcastEpisodes { get; internal set; }
 
-        public string SiteLink { get; set; }
+        public string SiteLink { get; internal set; }
 
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get; internal set; }
 
-        public string Category { get; set; }
+        public string Category { get; internal set; }
 
-        public bool HasErrors { get; set; }
+        public bool HasErrors { get; internal set; }
 
         private bool isLoaded;
         public bool IsLoaded
         {
             get { return isLoaded; }
-            set
+            internal set
             {
                 isLoaded = value;
                 if(isLoaded)
@@ -48,11 +48,11 @@ namespace PodHead
             }
         }
 
-        public bool ItemsLoaded { get; set; }
+        public bool ItemsLoaded { get; internal set; }
 
-        public int MaxItems { get; set; }
+        public int MaxItems { get; internal set; }
 
-        public bool ImageLoaded { get; set; }
+        public bool ImageLoaded { get; internal set; }
 
         public string ImageFilePath
         {
@@ -102,7 +102,7 @@ namespace PodHead
             PubDate = string.Empty;
             Ttl = string.Empty;
 
-            Items = new ConcurrentList<PodcastEpisode>();
+            PodcastEpisodes = new ConcurrentList<PodcastEpisode>();
             SiteLink = string.Empty;
             ImageUrl = string.Empty;
             Category = string.Empty;
@@ -113,12 +113,12 @@ namespace PodHead
 
         public IEnumerable<PodcastEpisode> GetDownloads()
         {
-            return Items.Where(it => it.IsDownloaded);
+            return PodcastEpisodes.Where(it => it.IsDownloaded);
         }
          
         public IEnumerable<PodcastEpisode> GetPlayed()
         {
-            return Items.Where(it => it.PercentPlayed > double.Epsilon);
+            return PodcastEpisodes.Where(it => it.PercentPlayed > double.Epsilon);
         }       
     }
 }

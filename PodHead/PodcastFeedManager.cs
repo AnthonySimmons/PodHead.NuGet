@@ -90,7 +90,7 @@ namespace PodHead
                 
                 foreach(var sub in Subscriptions)
                 {
-                    downloads.AddRange(sub.Items.Where(it => it.IsDownloaded));
+                    downloads.AddRange(sub.PodcastEpisodes.Where(it => it.IsDownloaded));
                 }
                                 
                 return downloads.ToList();
@@ -146,7 +146,7 @@ namespace PodHead
             int count = 0;
             foreach (PodcastFeed sub in Subscriptions)
             {
-                _parser.LoadSubscription(sub, MaxItems);
+                _parser.LoadPodcastFeedAsync(sub, MaxItems);
 
                 //Do the increment before the calculation.
                 OnFeedUpdated((double)++count / (double)Subscriptions.Count);
@@ -236,16 +236,16 @@ namespace PodHead
 
         public PodcastFeed GetSubscriptionFromItem(string itemTitle)
         {
-            return Subscriptions.FirstOrDefault(sub => sub.Items.Any(it => it.Title == itemTitle));
+            return Subscriptions.FirstOrDefault(sub => sub.PodcastEpisodes.Any(it => it.Title == itemTitle));
         }
 
         public PodcastEpisode GetItem(string title)
         {
-            PodcastFeed ch = Subscriptions.FirstOrDefault(m => m.Items.Any(p => p.Title == title));
+            PodcastFeed ch = Subscriptions.FirstOrDefault(m => m.PodcastEpisodes.Any(p => p.Title == title));
             PodcastEpisode it = null;
             if (ch != null)
             {
-                it = ch.Items.FirstOrDefault(m => m.Title == title);
+                it = ch.PodcastEpisodes.FirstOrDefault(m => m.Title == title);
             }
             return it;
         }
@@ -383,7 +383,7 @@ namespace PodHead
                                 IsNowPlaying = Convert.ToBoolean(item.Attributes[IsNowPlaying].Value),
                                 ParentFeed = subscription
                             };
-                            subscription.Items.Add(it);
+                            subscription.PodcastEpisodes.Add(it);
 
                             if(it.IsNowPlaying)
                             {
