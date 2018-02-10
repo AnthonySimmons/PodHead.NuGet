@@ -55,6 +55,7 @@
     <Compile Include="PodcastGenres.cs" />
     <Compile Include="PodcastSearch.cs" />
     <Compile Include="PodHead.cs" />
+    <Compile Include="PodHeadConfig.cs" />
     <Compile Include="RssWebClient.cs">
       <SubType>Component</SubType>
     </Compile>

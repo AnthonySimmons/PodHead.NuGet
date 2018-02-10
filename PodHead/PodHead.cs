@@ -15,6 +15,11 @@ namespace PodHead
 
         private readonly IConfig _config;
 
+        public PodHead(string downloadFolder, string appDataFolder, string appDataImageFolder, string configFileName)
+            : this(new PodHeadConfig(downloadFolder, appDataFolder, appDataImageFolder, configFileName))
+        {
+        }
+
         public PodHead(IConfig config)
         {
             _config = config;
