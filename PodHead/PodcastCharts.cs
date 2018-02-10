@@ -5,9 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using System.Text;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Converters;
 using System.Text.RegularExpressions;
 
 namespace PodHead
