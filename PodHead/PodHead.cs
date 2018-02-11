@@ -74,6 +74,7 @@ namespace PodHead
         {
             if(disposing && !_isDisposed)
             {
+                _isDisposed = true;
                 _parser.ErrorOccurred -= OnError;
                 _podcastCharts.ErrorOccurred -= OnError;
                 _podcastSearch.ErrorOccurred -= OnError;

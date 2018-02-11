@@ -6,7 +6,7 @@ from run_tests import run_tests
 prev_dir = ''
 
 def run_msbuild(version):
-	run_command("msbuild.exe PodHead.sln /t:Clean;Build /p:Configuration=Release;Platform=x86;AssemblyVersionNumber=%s" % version)
+	run_command("msbuild.exe PodHead.sln /t:Clean;Build /p:Configuration=Release;Platform=x86 /p:AssemblyVersionNumber=%s" % version)
 
 
 def run_build(version):
