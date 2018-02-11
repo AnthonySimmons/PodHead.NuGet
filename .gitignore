@@ -3,3 +3,5 @@
 packages/**
 *.vs/**
 *.axoCover/**
+*.pyc
+TestResult.xml
