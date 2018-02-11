@@ -12,6 +12,7 @@ CALL build\build.bat %VERSION%
 CALL build\test.bat
 CALL build\pack.bat %VERSION%
 CALL build\publish.bat
+CALL build\tag.bat
 
 SET RESULT=%ERRORLEVEL%
 CD %PREV_DIR%
