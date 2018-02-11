@@ -1,5 +1,4 @@
 ﻿
-
 using NSubstitute;
 using NUnit.Framework;
 using ObjectExtensions;
@@ -11,7 +10,7 @@ namespace PodHead.UnitTest
     internal class PodHeadUnitTests
     {
         [Test, PodHeadAutoSubstitute]
-        public void Search_ShouldInvokePodcastSearch(PodHead sut, IPodcastSearch podcastSearch, string searchTerm, uint limit)
+        public void Search_ShouldInvokePodcastSearchUnitTest(PodHead sut, IPodcastSearch podcastSearch, string searchTerm, uint limit)
         {
             sut.SetField(typeof(IPodcastSearch), podcastSearch);
             sut.Search(searchTerm, limit);
@@ -19,7 +18,7 @@ namespace PodHead.UnitTest
         }
 
         [Test, PodHeadAutoSubstitute]
-        public void GetTopCharts_ShouldInvokePodcastCharts(PodHead sut, IPodcastCharts podcastCharts, PodcastGenre podcastGenre, uint limit)
+        public void GetTopCharts_ShouldInvokePodcastChartsUnitTest(PodHead sut, IPodcastCharts podcastCharts, PodcastGenre podcastGenre, uint limit)
         {
             sut.SetField(typeof(IPodcastCharts), podcastCharts);
             sut.GetTopCharts(podcastGenre, limit);
@@ -27,7 +26,7 @@ namespace PodHead.UnitTest
         }
 
         [Test, PodHeadAutoSubstitute]
-        public void LoadPodcastFeed_ShouldInvokePodcastFeed(PodHead sut, PodcastFeed podcastFeed, IRssParser rssParser, uint limit)
+        public void LoadPodcastFeed_ShouldInvokePodcastFeedUnitTest(PodHead sut, PodcastFeed podcastFeed, IRssParser rssParser, uint limit)
         {
             sut.SetField(typeof(IRssParser), rssParser);
             sut.LoadPodcastFeed(podcastFeed, limit);

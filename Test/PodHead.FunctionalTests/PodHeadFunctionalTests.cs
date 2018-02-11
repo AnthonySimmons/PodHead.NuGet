@@ -42,7 +42,7 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
 
 
         [TestCaseSource(nameof(PodcastTitlesTestData))]
-        public void SearchTest(PodcastFeed expectedPodcastFeed)
+        public void SearchFunctionalTest(PodcastFeed expectedPodcastFeed)
         {
             IEnumerable<PodcastFeed> podcastFeeds = _podHead.Search(expectedPodcastFeed.Title);
             PodcastFeed feed = podcastFeeds.FirstOrDefault(p => p.Title == expectedPodcastFeed.Title);
@@ -53,7 +53,7 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
 
         [TestCase(5)]
         [TestCase(10)]
-        public void GetTopChartsTest(int limit)
+        public void GetTopChartsFunctionalTest(int limit)
         {
             IEnumerable<PodcastFeed> feeds = _podHead.GetTopCharts(PodcastGenre.Comedy, (uint)limit);
             Assert.AreEqual(limit, feeds.Count());
@@ -61,7 +61,7 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
         }
 
         [Test, Combinatorial]
-        public void LoadPodcastFeedTest([ValueSource(nameof(PodcastTitlesTestData))] PodcastFeed podcastFeed, [Values(5, 10)] int episodeLimit)
+        public void LoadPodcastFeedFunctionalTest([ValueSource(nameof(PodcastTitlesTestData))] PodcastFeed podcastFeed, [Values(5, 10)] int episodeLimit)
         {
             bool result = _podHead.LoadPodcastFeed(podcastFeed, (uint)episodeLimit);
             Assert.IsTrue(result);
@@ -71,7 +71,7 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
         }
 
         [TestCaseSource(nameof(PodcastTitlesTestData))]
-        public void SearchAndLoadTest(PodcastFeed expectedPodcastFeed)
+        public void SearchAndLoadFunctionalTest(PodcastFeed expectedPodcastFeed)
         {
             IEnumerable<PodcastFeed> podcastFeeds = _podHead.Search(expectedPodcastFeed.Title);
             PodcastFeed feed = podcastFeeds.FirstOrDefault(p => p.Title == expectedPodcastFeed.Title);
@@ -89,7 +89,7 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
         }
 
         [Test]
-        public void GetChartsAndLoadTest()
+        public void GetChartsAndLoadFunctionalTest()
         {
             IEnumerable<PodcastFeed> podcastFeeds = _podHead.GetTopCharts(PodcastGenre.Comedy);
             Assert.AreEqual(10, podcastFeeds.Count());
