@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PodHead")]
-[assembly: AssemblyDescription("API to search and retrieve podcast data from the iTunes Podcast service.")]
+[assembly: AssemblyDescription("API to retrieve podcast data from the iTunes Podcast service.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Anthony Simmons")]
 [assembly: AssemblyProduct("PodHead")]

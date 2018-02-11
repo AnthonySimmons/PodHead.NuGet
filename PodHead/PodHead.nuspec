@@ -7,7 +7,7 @@
     <authors>Anthony Simmons</authors>
     <owners>Anthony Simmons</owners>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>API to search and retrieve podcast data from the iTunes Podcast service.</description>
+    <description>API to retrieve podcast data from the iTunes Podcast service.</description>
     <copyright>Copyright © 2018</copyright>
     <projectUrl>https://github.com/AnthonySimmons/PodHead.NuGet</projectUrl>
     <licenseUrl>https://raw.githubusercontent.com/AnthonySimmons/PodHead.NuGet/master/LICENSE</licenseUrl>
