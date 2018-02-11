@@ -5,21 +5,30 @@ using System.Collections.Generic;
 
 namespace PodHead
 {
-    public class PodHead
+    public class PodHead : IDisposable
     {
         private readonly IPodcastCharts _podcastCharts;
 
         private readonly IPodcastSearch _podcastSearch;
 
         private readonly IRssParser _parser;
-       
+
+        public event ErrorEventHandler ErrorOccurred;
+
+        private bool _isDisposed;
+
         public PodHead()
         {
             _parser = new RssParser();
             _podcastCharts = new PodcastCharts(_parser);
             _podcastSearch = new PodcastSearch(_parser);
+
+            _parser.ErrorOccurred += OnError;
+            _podcastCharts.ErrorOccurred += OnError;
+            _podcastSearch.ErrorOccurred += OnError;
         }
-       
+
+
         /// <summary>
         /// Searches for the given term on the iTunes podcast service.
         /// </summary>
@@ -54,6 +63,26 @@ namespace PodHead
         public bool LoadPodcastFeed(PodcastFeed podcastFeed, uint maxEpisodeLimit = 10)
         {
             return _parser.LoadPodcastFeed(podcastFeed, maxEpisodeLimit);
+        }
+
+        protected virtual void OnError(string errorMessage)
+        {
+            ErrorOccurred?.Invoke(errorMessage);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if(disposing && !_isDisposed)
+            {
+                _parser.ErrorOccurred -= OnError;
+                _podcastCharts.ErrorOccurred -= OnError;
+                _podcastSearch.ErrorOccurred -= OnError;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace PodHead
         
         public event PodcastSourceUpdateEventHandler PodcastSourceUpdated;
 
-        public event ErrorEventHandler ErrorEncountered;
+        public event ErrorEventHandler ErrorOccurred;
         
         public PodcastCharts(IRssParser parser)
 		{
@@ -67,7 +67,7 @@ namespace PodHead
                 sub.Title = (string)subToken["collectionName"];
                 sub.ImageUrl = (string)subToken["artworkUrl100"];
                 sub.MaxItems = 0;
-				parser.LoadSubscriptionAsync (sub);
+				parser.LoadPodcastFeed (sub, sub.MaxItems);
                 
                 subscriptions.Add(sub);
             }
@@ -167,7 +167,7 @@ namespace PodHead
 
 		private void OnErrorEncountered(string message)
 		{
-			var copy = ErrorEncountered;
+			var copy = ErrorOccurred;
 			if (copy != null) 
 			{
 				copy.Invoke(message);

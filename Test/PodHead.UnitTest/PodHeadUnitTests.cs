@@ -4,8 +4,6 @@ using NSubstitute;
 using NUnit.Framework;
 using ObjectExtensions;
 using PodHead.Interfaces;
-using System;
-using System.Collections.Generic;
 
 namespace PodHead.UnitTest
 {

@@ -10,7 +10,7 @@ namespace PodHead
     {
         public event SearchResultsReceivedEventHandler SearchResultReceived;
 
-        public event ErrorEventHandler ErrorEncountered;
+        public event ErrorEventHandler ErrorOccurred;
 
         //https://itunes.apple.com/search?&term=bill+burr&media=podcast&entity=podcast&limit=10
 
@@ -60,7 +60,7 @@ namespace PodHead
 
         private void OnErrorEncountered(string message)
 		{
-            ErrorEncountered?.Invoke(message);
+            ErrorOccurred?.Invoke(message);
         }
 
         private void Client_OpenReadCompleted(object sender, OpenReadCompletedEventArgs e)

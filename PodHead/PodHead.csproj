@@ -54,7 +54,6 @@
     <Compile Include="Interfaces\IRssParser.cs" />
     <Compile Include="Interfaces\IPodcastCharts.cs" />
     <Compile Include="Interfaces\IPodcastSearch.cs" />
-    <Compile Include="IPodcastCharts.cs" />
     <Compile Include="PodcastGenres.cs" />
     <Compile Include="PodcastSearch.cs" />
     <Compile Include="PodHead.cs" />

@@ -19,11 +19,11 @@ namespace PodHead
     {
         public event SubscriptionParsedCompleteEventHandler SubscriptionParsedComplete;
 
-        public event ErrorEventHandler ErrorEventHandler;
+        public event ErrorEventHandler ErrorOccurred;
 
         public virtual void OnError(string errorMessage)
         {
-            ErrorEventHandler?.Invoke(errorMessage);
+            ErrorOccurred?.Invoke(errorMessage);
         }
 
         private static FeedType GetFeedType(string rssString)
@@ -112,7 +112,7 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                OnError(ex.ToString());
+                //OnError(ex.ToString());
                 success = false;
             }
             return success;
