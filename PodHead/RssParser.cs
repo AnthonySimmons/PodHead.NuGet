@@ -110,9 +110,8 @@ namespace PodHead
                     LoadPodcastFeed(sub, rss, maxItems);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //OnError(ex.ToString());
                 success = false;
             }
             return success;
