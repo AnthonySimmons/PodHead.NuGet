@@ -5,3 +5,4 @@ packages/**
 *.axoCover/**
 *.pyc
 TestResult.xml
+*.nupkg
