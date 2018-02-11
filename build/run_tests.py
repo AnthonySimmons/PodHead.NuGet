@@ -1,4 +1,4 @@
-
+import os
 from build_command import run_command
 
 test_dlls = [
@@ -8,6 +8,8 @@ test_dlls = [
 ]
 
 def run_tests():
+    if os.environ['RUNTESTS'] == "False":
+        return
     run_command("packages\\NUnit.ConsoleRunner.3.8.0\\tools\\nunit3-console.exe --x86 --labels=All %s" % " ".join(test_dlls))
 
 if __name__ == "__main__":

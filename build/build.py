@@ -6,7 +6,7 @@ from run_tests import run_tests
 prev_dir = ''
 
 def run_msbuild(version):
-	run_command("msbuild.exe PodHead.sln /t:Clean;Build /p:AssemblyVersionNumber=%s /p:Configuration=Release /p:Platform=x86 " % version)
+	run_command("msbuild.exe PodHead.sln /t:Clean;Build /p:AssemblyVersionNumber=%s /p:Configuration=Release /p:Platform=x86" % version)
 
 
 def run_build(version):
@@ -17,8 +17,13 @@ def run_build(version):
 		os.chdir(sln_dir)
 		run_msbuild(version)
 		run_tests()
+		nuget_pack(version)
 	finally:
 		os.chdir(prev_dir)
+
+
+def nuget_pack(version):
+	run_command("nuget.exe pack PodHead\PodHead.csproj -Properties Configuration=Release -Version %s" % version)
 
 
 def print_usage():
@@ -31,3 +36,4 @@ if __name__ == "__main__":
 		print_usage()
 		sys.exit(1)
 	run_build(sys.argv[1])
+	
