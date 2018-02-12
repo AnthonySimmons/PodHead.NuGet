@@ -30,18 +30,19 @@ namespace PodHead.Examples
                 PodcastFeed nprNewsPodcastFeed = podcastFeeds.FirstOrDefault(podcastFeed => podcastFeed.Title == podcastTitle);
                 if (nprNewsPodcastFeed != null)
                 {
-                    podHead.LoadPodcastFeed(nprNewsPodcastFeed, maxEpisodeLimit: 5);
-
-                    Console.WriteLine(nprNewsPodcastFeed.Title);
-                    Console.WriteLine(nprNewsPodcastFeed.Description);
-                    Console.WriteLine(nprNewsPodcastFeed.RssLink);
-
-                    foreach (PodcastEpisode podcastEpisode in nprNewsPodcastFeed.PodcastEpisodes)
+                    if (nprNewsPodcastFeed.Load(maxEpisodeLimit: 5))
                     {
-                        Console.WriteLine(podcastEpisode.Title);
-                        Console.WriteLine(podcastEpisode.Description);
-                        Console.WriteLine(podcastEpisode.PubDate);
-                        Console.WriteLine(podcastEpisode.Link);
+                        Console.WriteLine(nprNewsPodcastFeed.Title);
+                        Console.WriteLine(nprNewsPodcastFeed.Description);
+                        Console.WriteLine(nprNewsPodcastFeed.RssLink);
+
+                        foreach (PodcastEpisode podcastEpisode in nprNewsPodcastFeed.PodcastEpisodes)
+                        {
+                            Console.WriteLine(podcastEpisode.Title);
+                            Console.WriteLine(podcastEpisode.Description);
+                            Console.WriteLine(podcastEpisode.PubDate);
+                            Console.WriteLine(podcastEpisode.Link);
+                        }
                     }
                 }
 
@@ -65,17 +66,19 @@ namespace PodHead.Examples
                 //Loop over each podcast feed, load the episodes, and print the data.
                 foreach (PodcastFeed podcastFeed in podcastFeeds)
                 {
-                    podHead.LoadPodcastFeed(podcastFeed, maxEpisodeLimit: 5);
-                    Console.WriteLine(podcastFeed.Title);
-                    Console.WriteLine(podcastFeed.Description);
-                    Console.WriteLine(podcastFeed.RssLink);
-
-                    foreach (PodcastEpisode podcastEpisode in podcastFeed.PodcastEpisodes)
+                    if (podcastFeed.Load(maxEpisodeLimit: 5))
                     {
-                        Console.WriteLine(podcastEpisode.Title);
-                        Console.WriteLine(podcastEpisode.Description);
-                        Console.WriteLine(podcastEpisode.PubDate);
-                        Console.WriteLine(podcastEpisode.Link);
+                        Console.WriteLine(podcastFeed.Title);
+                        Console.WriteLine(podcastFeed.Description);
+                        Console.WriteLine(podcastFeed.RssLink);
+
+                        foreach (PodcastEpisode podcastEpisode in podcastFeed.PodcastEpisodes)
+                        {
+                            Console.WriteLine(podcastEpisode.Title);
+                            Console.WriteLine(podcastEpisode.Description);
+                            Console.WriteLine(podcastEpisode.PubDate);
+                            Console.WriteLine(podcastEpisode.Link);
+                        }
                     }
                 }
 

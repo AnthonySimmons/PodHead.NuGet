@@ -67,5 +67,11 @@ namespace PodHead
 
             PodcastEpisodes = new ConcurrentList<PodcastEpisode>();
         } 
+
+        public bool Load(uint maxEpisodeLimit = 10)
+        {
+            RssParser parser = new RssParser();
+            return parser.LoadPodcastFeed(this, maxEpisodeLimit);
+        }
     }
 }

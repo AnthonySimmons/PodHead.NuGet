@@ -63,7 +63,7 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
         [Test, Combinatorial]
         public void LoadPodcastFeedFunctionalTest([ValueSource(nameof(PodcastTitlesTestData))] PodcastFeed podcastFeed, [Values(5, 10)] int episodeLimit)
         {
-            bool result = _podHead.LoadPodcastFeed(podcastFeed, (uint)episodeLimit);
+            bool result = podcastFeed.Load((uint)episodeLimit);
             Assert.IsTrue(result);
             Assert.GreaterOrEqual(episodeLimit, podcastFeed.PodcastEpisodes.Count());
             podcastFeed.AssertEpisodes();
@@ -80,7 +80,7 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
 
             foreach (PodcastFeed podcastFeed in podcastFeeds)
             {
-                _podHead.LoadPodcastFeed(podcastFeed);
+                podcastFeed.Load();
                 //Cannot guarentee the result
                 podcastFeed.AssertEpisodes();
             }
@@ -97,7 +97,7 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
 
             foreach (PodcastFeed podcastFeed in podcastFeeds)
             {
-                _podHead.LoadPodcastFeed(podcastFeed);
+                podcastFeed.Load();
                 podcastFeed.AssertEpisodes();
             }
 

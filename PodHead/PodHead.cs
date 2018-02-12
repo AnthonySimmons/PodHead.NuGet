@@ -51,20 +51,6 @@ namespace PodHead
             return _podcastCharts.GetPodcasts(genre, maxPodcastLimit);
         }
 
-        /// <summary>
-        /// Reads the episodes for the given <see cref="PodcastFeed"/>.
-        /// </summary>
-        /// <param name="podcastFeed"><see cref="PodcastFeed"/> to load.</param>
-        /// <param name="maxEpisodeLimit">Max number of episodes to load from the given <see cref="PodcastFeed"/>.</param>
-        /// <returns>
-        /// True when successful, false otherwise.
-        /// The Episodes are available in the <see cref="PodcastFeed"/> class.
-        /// </returns>
-        public bool LoadPodcastFeed(PodcastFeed podcastFeed, uint maxEpisodeLimit = 10)
-        {
-            return _parser.LoadPodcastFeed(podcastFeed, maxEpisodeLimit);
-        }
-
         protected virtual void OnError(string errorMessage)
         {
             ErrorOccurred?.Invoke(errorMessage);

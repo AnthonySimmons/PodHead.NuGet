@@ -24,13 +24,6 @@ namespace PodHead.UnitTest
             sut.GetTopCharts(podcastGenre, limit);
             podcastCharts.Received(1).GetPodcasts(podcastGenre, limit);
         }
-
-        [Test, PodHeadAutoSubstitute]
-        public void LoadPodcastFeed_ShouldInvokePodcastFeedUnitTest(PodHead sut, PodcastFeed podcastFeed, IRssParser rssParser, uint limit)
-        {
-            sut.SetField(typeof(IRssParser), rssParser);
-            sut.LoadPodcastFeed(podcastFeed, limit);
-            rssParser.Received(1).LoadPodcastFeed(podcastFeed, limit);
-        }        
+    
     }
 }
