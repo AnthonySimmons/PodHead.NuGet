@@ -56,7 +56,7 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
         public void GetTopChartsFunctionalTest(int limit)
         {
             IEnumerable<PodcastFeed> feeds = _podHead.GetTopCharts(PodcastGenre.Comedy, (uint)limit);
-            Assert.AreEqual(limit, feeds.Count());
+            Assert.GreaterOrEqual(limit, feeds.Count());
             Assert.IsNull(_errorMessage);
         }
 
@@ -65,7 +65,7 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
         {
             bool result = _podHead.LoadPodcastFeed(podcastFeed, (uint)episodeLimit);
             Assert.IsTrue(result);
-            Assert.AreEqual(episodeLimit, podcastFeed.PodcastEpisodes.Count());
+            Assert.GreaterOrEqual(episodeLimit, podcastFeed.PodcastEpisodes.Count());
             podcastFeed.AssertEpisodes();
             Assert.IsNull(_errorMessage);
         }
