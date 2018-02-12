@@ -97,8 +97,7 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
 
             foreach (PodcastFeed podcastFeed in podcastFeeds)
             {
-                bool result = _podHead.LoadPodcastFeed(podcastFeed);
-                Assert.IsTrue(result, _errorMessage);
+                _podHead.LoadPodcastFeed(podcastFeed);
                 podcastFeed.AssertEpisodes();
             }
 

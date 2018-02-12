@@ -14,6 +14,8 @@ CALL build\test.bat
 IF %ERRORLEVEL% NEQ 0 EXIT 1
 CALL build\pack.bat %VERSION%
 IF %ERRORLEVEL% NEQ 0 EXIT 1
+CALL build\tag.bat %VERSION%
+IF %ERRORLEVEL% NEQ 0 EXIT 1
 CALL build\publish.bat
 
 SET RESULT=%ERRORLEVEL%
