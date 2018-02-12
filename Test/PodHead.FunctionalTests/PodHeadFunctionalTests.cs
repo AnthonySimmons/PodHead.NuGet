@@ -92,7 +92,7 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
         public void GetChartsAndLoadFunctionalTest()
         {
             IEnumerable<PodcastFeed> podcastFeeds = _podHead.GetTopCharts(PodcastGenre.Comedy);
-            Assert.AreEqual(10, podcastFeeds.Count());
+            Assert.GreaterOrEqual(10, podcastFeeds.Count());
             PodcastFeed feed = podcastFeeds.First();
 
             foreach (PodcastFeed podcastFeed in podcastFeeds)
