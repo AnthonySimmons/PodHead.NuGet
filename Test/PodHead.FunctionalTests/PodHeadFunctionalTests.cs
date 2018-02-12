@@ -1,11 +1,12 @@
 ﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace PodHead.FunctionalTests
 {
     [TestFixture]
-    public class PodHeadFunctionalTests
+    public class PodHeadFunctionalTests : IDisposable
     {
         private PodHead _podHead;
 
@@ -102,6 +103,23 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
             }
 
             Assert.IsNull(_errorMessage);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if(disposing)
+            {
+                if (_podHead != null)
+                {
+                    _podHead.Dispose();
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
