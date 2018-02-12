@@ -13,6 +13,7 @@ namespace PodHead
 
         private readonly IRssParser _parser;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1009:DeclareEventHandlersCorrectly")]
         public event ErrorEventHandler ErrorOccurred;
 
         private bool _isDisposed;
