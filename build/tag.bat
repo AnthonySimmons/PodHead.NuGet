@@ -6,4 +6,5 @@ IF "%1" == "" (
 SET VERSION=%1
 
 git tag %VERSION%
+IF %ERRORLEVEL% NEQ 0 EXIT 1
 git push --tags
