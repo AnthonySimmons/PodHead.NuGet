@@ -47,16 +47,12 @@ namespace PodHead.Examples
             if(podHead.TrySearch(podcastTitle, out IEnumerable<PodcastFeed> podcastFeeds, out string errorMessage, maxNumberOfFeeds: 5))
             {
                 //Get the podcast feed that matches the title, and print its data.
-                PodcastFeed nprNewsPodcastFeed = podcastFeeds.FirstOrDefault(podcastFeed => podcastFeed.Title == podcastTitle);
-                if (nprNewsPodcastFeed != null)
+                PodcastFeed podcastFeed = podcastFeeds.FirstOrDefault(feed => feed.Title == podcastTitle);
+                if (podcastFeed != null)
                 {
-                    LoadPodcastEpisodes(nprNewsPodcastFeed);
+                    LoadPodcastEpisodes(podcastFeed);
                     //Download latest episode
-                    PodcastEpisode latestEpisode = nprNewsPodcastFeed.PodcastEpisodes.First();
-                    string musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-                    //Escape file path with quotes.
-                    string filePath = Path.Combine(musicFolder, $"LatestNPR.mp3");
-                    nprNewsPodcastFeed.PodcastEpisodes.First().Download(filePath);
+                    DownloadEpisode(podcastFeed.PodcastEpisodes.First());
                 }
             }
             else
@@ -65,6 +61,16 @@ namespace PodHead.Examples
             }
         }
         
+        /// <summary>
+        /// Downloads the given episode the the Music folder.
+        /// </summary>
+        private static void DownloadEpisode(PodcastEpisode podcastEpisode)
+        {
+            string musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+            string filePath = Path.Combine(musicFolder, $"LatestEpisode.mp3");
+            podcastEpisode.Download(filePath);
+        }
+
         /// <summary>
         /// Retrieves and Loads Podcast Feeds by Genre.
         /// </summary>
