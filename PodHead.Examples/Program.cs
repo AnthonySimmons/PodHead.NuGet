@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace PodHead.Examples
@@ -10,6 +11,9 @@ namespace PodHead.Examples
         {
             SearchForPodcast("NPR News Now");
             GetPodcastCharts(PodcastGenre.Comedy);
+            
+            TrySearchForPodcast("NPR News Now");
+            TryGetPodcastCharts(PodcastGenre.Comedy);
         }
 
         /// <summary>
@@ -18,77 +22,103 @@ namespace PodHead.Examples
         /// </summary>
         private static void SearchForPodcast(string podcastTitle)
         {
-            using (PodHead podHead = new PodHead())
+            PodHead podHead = new PodHead();
+
+            //Get a collection of podcast feeds returned by the search. (May throw exceptions).
+            IEnumerable<PodcastFeed> podcastFeeds = podHead.Search(podcastTitle, maxNumberOfFeeds: 5);
+
+            //Get the podcast feed that matches the title, and print its data.
+            PodcastFeed nprNewsPodcastFeed = podcastFeeds.FirstOrDefault(podcastFeed => podcastFeed.Title == podcastTitle);
+            if (nprNewsPodcastFeed != null)
             {
-                //Subscribe to any errors that may occur.
-                podHead.ErrorOccurred += PodHead_ErrorOccurred;
+                LoadPodcastEpisodes(nprNewsPodcastFeed);
+            }
+        }
+        
+        /// <summary>
+        /// Retrieves and Loads Podcast Feeds by Search Term.
+        /// In this example the search term happens to be the title of the podcast.
+        /// </summary>
+        private static void TrySearchForPodcast(string podcastTitle)
+        {
+            PodHead podHead = new PodHead();
 
-                //Get a collection of podcast feeds returned by the search.
-                IEnumerable<PodcastFeed> podcastFeeds = podHead.Search(podcastTitle, maxNumberOfFeeds: 5);
-
+            //Get a collection of podcast feeds returned by the search.
+            if(podHead.TrySearch(podcastTitle, out IEnumerable<PodcastFeed> podcastFeeds, out string errorMessage, maxNumberOfFeeds: 5))
+            {
                 //Get the podcast feed that matches the title, and print its data.
                 PodcastFeed nprNewsPodcastFeed = podcastFeeds.FirstOrDefault(podcastFeed => podcastFeed.Title == podcastTitle);
                 if (nprNewsPodcastFeed != null)
                 {
-                    if (nprNewsPodcastFeed.Load(maxEpisodeLimit: 5))
-                    {
-                        Console.WriteLine(nprNewsPodcastFeed.Title);
-                        Console.WriteLine(nprNewsPodcastFeed.Description);
-                        Console.WriteLine(nprNewsPodcastFeed.RssLink);
-
-                        foreach (PodcastEpisode podcastEpisode in nprNewsPodcastFeed.PodcastEpisodes)
-                        {
-                            Console.WriteLine(podcastEpisode.Title);
-                            Console.WriteLine(podcastEpisode.Description);
-                            Console.WriteLine(podcastEpisode.PubDate);
-                            Console.WriteLine(podcastEpisode.Link);
-                        }
-                    }
+                    LoadPodcastEpisodes(nprNewsPodcastFeed);
+                    //Download latest episode
+                    PodcastEpisode latestEpisode = nprNewsPodcastFeed.PodcastEpisodes.First();
+                    string musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+                    //Escape file path with quotes.
+                    string filePath = Path.Combine(musicFolder, $"LatestNPR.mp3");
+                    nprNewsPodcastFeed.PodcastEpisodes.First().Download(filePath);
                 }
-
-                podHead.ErrorOccurred -= PodHead_ErrorOccurred;
+            }
+            else
+            {
+                Console.Error.WriteLine(errorMessage);
             }
         }
-
-
+        
         /// <summary>
         /// Retrieves and Loads Podcast Feeds by Genre.
         /// </summary>
         private static void GetPodcastCharts(PodcastGenre genre)
         {
-            using (PodHead podHead = new PodHead())
+            PodHead podHead = new PodHead();
+            //Get the top podcasts for this genre
+            IEnumerable<PodcastFeed> podcastFeeds = podHead.GetTopCharts(genre, maxPodcastLimit: 5);
+
+            foreach (PodcastFeed podcastFeed in podcastFeeds)
             {
-                podHead.ErrorOccurred += PodHead_ErrorOccurred;
-
-                //Get the top podcasts for this genre
-                IEnumerable<PodcastFeed> podcastFeeds = podHead.GetTopCharts(genre, maxPodcastLimit: 5);
-
-                //Loop over each podcast feed, load the episodes, and print the data.
-                foreach (PodcastFeed podcastFeed in podcastFeeds)
-                {
-                    if (podcastFeed.Load(maxEpisodeLimit: 5))
-                    {
-                        Console.WriteLine(podcastFeed.Title);
-                        Console.WriteLine(podcastFeed.Description);
-                        Console.WriteLine(podcastFeed.RssLink);
-
-                        foreach (PodcastEpisode podcastEpisode in podcastFeed.PodcastEpisodes)
-                        {
-                            Console.WriteLine(podcastEpisode.Title);
-                            Console.WriteLine(podcastEpisode.Description);
-                            Console.WriteLine(podcastEpisode.PubDate);
-                            Console.WriteLine(podcastEpisode.Link);
-                        }
-                    }
-                }
-
-                podHead.ErrorOccurred -= PodHead_ErrorOccurred;
+                LoadPodcastEpisodes(podcastFeed);
             }
         }
-        
-        private static void PodHead_ErrorOccurred(string errorMessage)
+
+        /// <summary>
+        /// Retrieves and Loads Podcast Feeds by Genre.
+        /// </summary>
+        private static void TryGetPodcastCharts(PodcastGenre genre)
         {
-            Console.Error.WriteLine(errorMessage);
+            PodHead podHead = new PodHead();
+            //Get the top podcasts for this genre
+            if(podHead.TryGetTopCharts(genre, out IEnumerable<PodcastFeed> podcastFeeds, out string errorMessage, maxPodcastLimit: 5))
+            {
+                foreach (PodcastFeed podcastFeed in podcastFeeds)
+                {
+                    LoadPodcastEpisodes(podcastFeed);
+                }
+            }
+            else
+            {
+                Console.Error.WriteLine(errorMessage);
+            }
+        }
+
+        /// <summary>
+        /// Downloads the podcast episodes, and prints off the data.
+        /// </summary>
+        private static void LoadPodcastEpisodes(PodcastFeed podcastFeed)
+        {
+            if (podcastFeed.Load(maxEpisodeLimit: 5))
+            {
+                Console.WriteLine(podcastFeed.Title);
+                Console.WriteLine(podcastFeed.Description);
+                Console.WriteLine(podcastFeed.RssLink);
+
+                foreach (PodcastEpisode podcastEpisode in podcastFeed.PodcastEpisodes)
+                {
+                    Console.WriteLine(podcastEpisode.Title);
+                    Console.WriteLine(podcastEpisode.Description);
+                    Console.WriteLine(podcastEpisode.PubDate);
+                    Console.WriteLine(podcastEpisode.Link);
+                }
+            }
         }
     }
 }

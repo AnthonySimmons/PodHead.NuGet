@@ -13,7 +13,7 @@ namespace PodHead
     internal class PodcastCharts : IPodcastCharts
     {
         private readonly IRssParser _parser;
-       
+
         //https://itunes.apple.com/lookup?id=260190086&entity=podcast
         private const string iTunesLookupUrlFormat = "https://itunes.apple.com/lookup?id={0}&entity={1}";
 
@@ -22,16 +22,16 @@ namespace PodHead
         public const string iTunesPodcastFormatAll = "https://itunes.apple.com/us/rss/toppodcasts/limit={0}/xml";
 
         private const string EntityPodcast = "podcast";
-        
+
         public event PodcastSourceUpdateEventHandler PodcastSourceUpdated;
 
         public event ErrorEventHandler ErrorOccurred;
-        
+
         public PodcastCharts(IRssParser parser)
-		{
+        {
             _parser = parser;
-		}
-        
+        }
+
 
         private static string GetPodcastInfoJson(string podcastId)
         {
@@ -54,7 +54,7 @@ namespace PodHead
             //Ex.
             //https://itunes.apple.com/lookup?id=278981407&entity=podcast
             var subscriptions = new List<PodcastFeed>();
-                        
+
             string feedUrl = string.Empty;
             JToken rootToken = JObject.Parse(json);
             JToken resultsToken = rootToken["results"];
@@ -67,14 +67,14 @@ namespace PodHead
                 sub.Title = (string)subToken["collectionName"];
                 sub.ImageUrl = (string)subToken["artworkUrl100"];
                 sub.MaxItems = 0;
-				parser.LoadPodcastFeed (sub, sub.MaxItems);
-                
+                parser.LoadPodcastFeed(sub, sub.MaxItems);
+
                 subscriptions.Add(sub);
             }
 
             return subscriptions;
         }
-        
+
         private static string GetPodcastId(string itunesPodcastUrl)
         {
             //Ex.
@@ -129,59 +129,51 @@ namespace PodHead
                 Category = "iTunes",
                 MaxItems = limit,
             };
-            _parser.LoadPodcastFeedAsync(sourceSub, limit);
+            _parser.LoadPodcastFeed(sourceSub, limit);
 
             return sourceSub;
         }
 
         public IEnumerable<PodcastFeed> GetPodcasts(PodcastGenre genre, uint limit)
         {
-            try
+            var podcastsChart = GetiTunesPodcasts(genre, limit);
+            List<PodcastFeed> feeds = new List<PodcastFeed>();
+            int count = 0;
+            foreach (var podcast in podcastsChart.PodcastEpisodes)
             {
-                var podcastsChart = GetiTunesPodcasts(genre, limit);
-                List<PodcastFeed> feeds = new List<PodcastFeed>();
-                int count = 0;
-                foreach (var podcast in podcastsChart.PodcastEpisodes)
+                var podcastId = GetPodcastId(podcast.Link);
+                var podcastInfoJson = GetPodcastInfoJson(podcastId);
+                var subscriptions = DeserializeFeeds(podcastInfoJson, _parser);
+                var sub = subscriptions.FirstOrDefault();
+
+                if (sub != null && feeds.FirstOrDefault(p => p.Title == sub.Title) == null)
                 {
-                    var podcastId = GetPodcastId(podcast.Link);
-                    var podcastInfoJson = GetPodcastInfoJson(podcastId);
-                    var subscriptions = DeserializeFeeds(podcastInfoJson, _parser);
-                    var sub = subscriptions.FirstOrDefault();
-
-                    if (sub != null && feeds.FirstOrDefault(p => p.Title == sub.Title) == null)
-                    {
-                        feeds.Add(sub);
-                    }
-
-                    double percent = (double)(++count) / (double)podcastsChart.PodcastEpisodes.Count;
-                    OnPodcastSourceUpdated(percent);
+                    feeds.Add(sub);
                 }
-                return feeds;
+
+                double percent = (double)(++count) / (double)podcastsChart.PodcastEpisodes.Count;
+                OnPodcastSourceUpdated(percent);
             }
-            catch (Exception ex)
+            return feeds;
+        }
+
+        private void OnErrorEncountered(string message)
+        {
+            var copy = ErrorOccurred;
+            if (copy != null)
             {
-                OnErrorEncountered(ex.Message);
-                return null;
+                copy.Invoke(message);
             }
         }
 
-		private void OnErrorEncountered(string message)
-		{
-			var copy = ErrorOccurred;
-			if (copy != null) 
-			{
-				copy.Invoke(message);
-			}
-		}
-
-		private void OnPodcastSourceUpdated(double percentUpdated)
-		{
-			var copy = PodcastSourceUpdated;
-			if (copy != null) 
-			{
-				copy.Invoke(percentUpdated);
-			}
-		}
+        private void OnPodcastSourceUpdated(double percentUpdated)
+        {
+            var copy = PodcastSourceUpdated;
+            if (copy != null)
+            {
+                copy.Invoke(percentUpdated);
+            }
+        }
 
         public void GetPodcastsAsync(PodcastGenre genre, uint limit)
         {

@@ -6,30 +6,14 @@ using System.Linq;
 namespace PodHead.FunctionalTests
 {
     [TestFixture]
-    public class PodHeadFunctionalTests : IDisposable
+    public class PodHeadFunctionalTests
     {
         private PodHead _podHead;
-
-        private string _errorMessage;
-
+        
         [SetUp]
         public void SetUp()
         {
-            _errorMessage = null;
             _podHead = new PodHead();
-            _podHead.ErrorOccurred += PodHead_ErrorOccurred;
-        }
-
-        private void PodHead_ErrorOccurred(string errorMessage)
-        {
-            _errorMessage = errorMessage;
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            _podHead.ErrorOccurred -= PodHead_ErrorOccurred;
-            _podHead.Dispose();
         }
 
         public static IEnumerable<PodcastFeed> PodcastTitlesTestData => new List<PodcastFeed>
@@ -49,7 +33,6 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
             PodcastFeed feed = podcastFeeds.FirstOrDefault(p => p.Title == expectedPodcastFeed.Title);
             Assert.IsNotNull(feed);
             expectedPodcastFeed.AssertEqual(feed);
-            Assert.IsNull(_errorMessage);
         }
 
         [TestCase(5)]
@@ -58,7 +41,27 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
         {
             IEnumerable<PodcastFeed> feeds = _podHead.GetTopCharts(PodcastGenre.Comedy, (uint)limit);
             Assert.GreaterOrEqual(limit, feeds.Count());
-            Assert.IsNull(_errorMessage);
+        }
+
+        [TestCaseSource(nameof(PodcastTitlesTestData))]
+        public void TrySearchFunctionalTest(PodcastFeed expectedPodcastFeed)
+        {
+            bool success = _podHead.TrySearch(expectedPodcastFeed.Title, out IEnumerable<PodcastFeed> podcastFeeds, out string errorMessage);
+            Assert.IsTrue(success);
+            Assert.IsNull(errorMessage);
+            PodcastFeed feed = podcastFeeds.FirstOrDefault(p => p.Title == expectedPodcastFeed.Title);
+            Assert.IsNotNull(feed);
+            expectedPodcastFeed.AssertEqual(feed);
+        }
+
+        [TestCase(5)]
+        [TestCase(10)]
+        public void TryGetTopChartsFunctionalTest(int limit)
+        {
+            bool success = _podHead.TryGetTopCharts(PodcastGenre.Comedy, out IEnumerable<PodcastFeed> feeds, out string errorMessage, (uint)limit);
+            Assert.IsTrue(success);
+            Assert.IsNull(errorMessage);
+            Assert.GreaterOrEqual(limit, feeds.Count());
         }
 
         [Test, Combinatorial]
@@ -68,7 +71,6 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
             Assert.IsTrue(result);
             Assert.GreaterOrEqual(episodeLimit, podcastFeed.PodcastEpisodes.Count());
             podcastFeed.AssertEpisodes();
-            Assert.IsNull(_errorMessage);
         }
 
         [TestCaseSource(nameof(PodcastTitlesTestData))]
@@ -85,15 +87,15 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
                 //Cannot guarentee the result
                 podcastFeed.AssertEpisodes();
             }
-
-            Assert.IsNull(_errorMessage);
+            
         }
 
         [Test]
         public void GetChartsAndLoadFunctionalTest()
         {
-            IEnumerable<PodcastFeed> podcastFeeds = _podHead.GetTopCharts(PodcastGenre.Comedy);
-            Assert.GreaterOrEqual(10, podcastFeeds.Count());
+            const int maxItems = 5;
+            IEnumerable<PodcastFeed> podcastFeeds = _podHead.GetTopCharts(PodcastGenre.Comedy, maxItems);
+            Assert.GreaterOrEqual(maxItems, podcastFeeds.Count());
             PodcastFeed feed = podcastFeeds.First();
 
             foreach (PodcastFeed podcastFeed in podcastFeeds)
@@ -101,25 +103,8 @@ Check it out as Adam hangs out with some of his pals like: Larry Miller, David A
                 podcastFeed.Load();
                 podcastFeed.AssertEpisodes();
             }
-
-            Assert.IsNull(_errorMessage);
+            
         }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if(disposing)
-            {
-                if (_podHead != null)
-                {
-                    _podHead.Dispose();
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
+        
     }
 }

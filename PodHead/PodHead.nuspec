@@ -14,5 +14,6 @@
     <dependencies>
       <dependency id="Newtonsoft.Json" version="8.0.1" />
     </dependencies>
+    <tags>Podcast iTunes RSS REST</tags>
   </metadata>
 </package>

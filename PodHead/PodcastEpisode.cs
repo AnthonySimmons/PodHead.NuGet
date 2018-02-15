@@ -1,4 +1,8 @@
 ﻿
+using System;
+using System.IO;
+using System.Net;
+
 namespace PodHead
 {
 
@@ -34,6 +38,29 @@ namespace PodHead
             Link = link;
             Guid = guid;
             PubDate = pubDate;
+        }
+
+        public void Download(string filename)
+        {
+            using (WebClient webClient = new WebClient())
+            {
+                webClient.DownloadFile(Link, filename);
+            }
+        }
+
+        public bool TryDownload(string filename, out string errorMessage)
+        {
+            errorMessage = null;
+            try
+            {
+                Download(filename);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                errorMessage = ex.Message;
+                return false;
+            }
         }
     }
 }

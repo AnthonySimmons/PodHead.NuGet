@@ -42,19 +42,11 @@ namespace PodHead
 
         public IEnumerable<PodcastFeed> Search(string searchTerm, uint maxNumberOfFeeds)
         {
-            try
+            var searchUrl = GetSearchUrl(searchTerm, maxNumberOfFeeds);
+            using (var client = new WebClient())
             {
-                var searchUrl = GetSearchUrl(searchTerm, maxNumberOfFeeds);
-                using (var client = new WebClient())
-                {
-                    Stream stream = client.OpenRead(searchUrl);
-                    return ParseSearchResults(stream);
-                }
-            }
-            catch (Exception ex)
-            {
-                OnErrorEncountered(ex.Message);
-                return null;
+                Stream stream = client.OpenRead(searchUrl);
+                return ParseSearchResults(stream);
             }
         }
 
